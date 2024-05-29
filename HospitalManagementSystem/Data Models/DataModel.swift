@@ -1,85 +1,139 @@
-import SwiftUI
+import Foundation
 
-// User structure containing Email, PhoneNumber, and Password
-struct User: Hashable {
-    var email: String
-    var phoneNumber: String
-    var password: String
+struct User: Identifiable, Equatable, Hashable, Codable {
+    let id = UUID()
+    let email: String
+    let phoneNumber: String
+    let password: String
+    let name: String
 }
 
-// Admin, Doctor, and Patient structures
-struct Admin {
+struct Admin: Codable {
+    var user: User
+    static let adminEmail = "admin@hospital.com"
+    static let adminPhoneNumber = "9876543210"
+    static let adminPassword = "12345678"
+    static let adminName = "Admin"
+}
+
+struct Doctor: Codable {
     var user: User
 }
 
-struct Doctor {
+struct Patient: Codable {
     var user: User
-    var specialty: String
 }
 
-struct Patient {
-    var user: User
-    var medicalHistory: String
-}
-
-// DataModel class to manage users
 class DataModel: ObservableObject {
-    static let shared = DataModel()
-    
-    @Published var admin = Admin(user: User(email: "admin@hospital.com", phoneNumber: "9876543210", password: "12345678"))
-    @Published var doctors: [Doctor] = [
-        Doctor(user: User(email: "doctor1@hospital.com", phoneNumber: "1234567890", password: "doctor123"), specialty: "Cardiology"),
-        Doctor(user: User(email: "doctor2@hospital.com", phoneNumber: "1234567891", password: "doctor456"), specialty: "Neurology")
-    ]
-    @Published var patients: [Patient] = [
-        Patient(user: User(email: "patient1@hospital.com", phoneNumber: "2345678901", password: "patient123"), medicalHistory: "Diabetes"),
-        Patient(user: User(email: "patient2@hospital.com", phoneNumber: "2345678902", password: "patient456"), medicalHistory: "Hypertension")
-    ]
-    
-    // Authenticate user based on email and password
-    func authenticate(email: String, password: String) -> Any? {
-        if email == admin.user.email && password == admin.user.password {
-            return admin
-        }
-        
-        if let doctor = doctors.first(where: { $0.user.email == email && $0.user.password == password }) {
-            return doctor
-        }
-        
-        if let patient = patients.first(where: { $0.user.email == email && $0.user.password == password }) {
-            return patient
-        }
-        
-        return nil
+    @Published private var admins: [User: Admin]
+    @Published private var doctors: [User: Doctor] = [:]
+    @Published private var patients: [User: Patient] = [:]
+
+    init() {
+        self.admins = [:]
+        self.doctors = [:]
+        self.patients = [:]
+
+        initializeAdmins()
+        initializeDoctors()
+        initializePatients()
     }
-    
-    // Add a new doctor
-    func addDoctor(email: String, phoneNumber: String, password: String, specialty: String) {
-        let newDoctor = Doctor(user: User(email: email, phoneNumber: phoneNumber, password: password), specialty: specialty)
-        doctors.append(newDoctor)
+
+    private func initializeAdmins() {
+        let adminUser = User(email: Admin.adminEmail, phoneNumber: Admin.adminPhoneNumber, password: Admin.adminPassword, name: Admin.adminName)
+        self.admins = [adminUser: Admin(user: adminUser)]
     }
-    
-    // Add a new patient
-    func addPatient(email: String, phoneNumber: String, password: String, medicalHistory: String) {
-        let newPatient = Patient(user: User(email: email, phoneNumber: phoneNumber, password: password), medicalHistory: medicalHistory)
-        patients.append(newPatient)
+
+    private func initializeDoctors() {
+        let doctorUser = User(email: "doctor@hospital.com", phoneNumber: "1234567890", password: "doctorpass", name: "Dr. Smith")
+        self.doctors[doctorUser] = Doctor(user: doctorUser)
     }
-    
-    // Check if a user already exists
-    func userExists(email: String) -> Bool {
-        if email == admin.user.email {
-            return true
+
+    private func initializePatients() {
+        let patientUser = User(email: "tushar@hospital.com", phoneNumber: "0987654321", password: "patientpass", name: "Tushar Mahajan")
+        self.patients[patientUser] = Patient(user: patientUser)
+    }
+
+    // Retrieve doctors from file
+    func getDoctorsFromFile() -> [User: Doctor]? {
+        guard let codedDoctors = try? Data(contentsOf: DataModel.ArchiveURLForDoctors) else {
+            return nil
         }
-        
-        if doctors.contains(where: { $0.user.email == email }) {
-            return true
+        let propertyListDecoder = PropertyListDecoder()
+        return try? propertyListDecoder.decode([User: Doctor].self, from: codedDoctors)
+    }
+
+    // Save doctors to file
+    func saveDoctorsToFile(doctors: [User: Doctor]) {
+        let propertyListEncoder = PropertyListEncoder()
+        if let codedDoctors = try? propertyListEncoder.encode(doctors) {
+            try? codedDoctors.write(to: DataModel.ArchiveURLForDoctors, options: .withoutOverwriting)
         }
-        
-        if patients.contains(where: { $0.user.email == email }) {
-            return true
+    }
+
+    // Retrieve patients from file
+    func getPatientsFromFile() -> [User: Patient]? {
+        guard let codedPatients = try? Data(contentsOf: DataModel.ArchiveURLForPatients) else {
+            return nil
         }
-        
-        return false
+        let propertyListDecoder = PropertyListDecoder()
+        return try? propertyListDecoder.decode([User: Patient].self, from: codedPatients)
+    }
+
+    // Save patients to file
+    func savePatientsToFile(patients: [User: Patient]) {
+        let propertyListEncoder = PropertyListEncoder()
+        if let codedPatients = try? propertyListEncoder.encode(patients) {
+            try? codedPatients.write(to: DataModel.ArchiveURLForPatients, options: .withoutOverwriting)
+        }
+    }
+
+    // File URLs for doctors and patients data
+    private static let ArchiveURLForDoctors = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("doctors").appendingPathExtension("plist")
+    private static let ArchiveURLForPatients = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("patients").appendingPathExtension("plist")
+
+    func signUp(email: String, phoneNumber: String, password: String, name: String, userType: String) {
+        let newUser = User(email: email, phoneNumber: phoneNumber, password: password, name: name)
+
+        switch userType {
+        case "Doctor":
+            let newDoctor = Doctor(user: newUser)
+            doctors[newUser] = newDoctor
+            saveDoctorsToFile(doctors: doctors)
+        case "Patient":
+            let newPatient = Patient(user: newUser)
+            patients[newUser] = newPatient
+            savePatientsToFile(patients: patients)
+        default:
+            break
+        }
+    }
+
+
+    func signIn(email: String, password: String) -> (String, User?) {
+        // Check for admin
+        for (user, admin) in admins {
+            if user.email == email && user.password == password {
+                return ("Admin", user)
+            }
+        }
+
+        // Check for doctor
+        for (user, doctor) in doctors {
+            if user.email == email && user.password == password {
+                return ("Doctor", user)
+            }
+        }
+
+        // Check for patient
+        for (user, patient) in patients {
+            if user.email == email && user.password == password {
+                return ("Patient", user)
+            }
+        }
+
+        return ("None", nil)
     }
 }
-
+// Instantiate DataModel
+var dataModel = DataModel()

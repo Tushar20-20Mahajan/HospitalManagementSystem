@@ -1,79 +1,134 @@
 import SwiftUI
 
 struct SignInView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var email = ""
     @State private var password = ""
-    @State private var showSignUp = false
-    @State private var showAdminInterface = false
-    @State private var showDoctorInterface = false
-    @State private var showPatientInterface = false
+    @State private var showingSignUp = false
+    @State private var userType = ""
+    @State private var user: User?
+    @State private var signInSuccess = false
+    @State private var signInFailed = false
     
     var body: some View {
         VStack {
-            Text("Sign In")
+            Spacer()
+                .frame(height: 80)
+            
+            Text("Hello again!")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.top, 50)
+                .foregroundColor(Color.blue)
+            
+            Text("Welcome back you've been missed!")
+                .font(.body)
+                .foregroundColor(Color.gray)
+                .padding(.top, 5)
             
             TextField("Email", text: $email)
+                .textFieldStyle(PlainTextFieldStyle())
                 .padding()
-                .background(Color.gray.opacity(0.2))
+                .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.top, 20)
             
             SecureField("Password", text: $password)
+                .textFieldStyle(PlainTextFieldStyle())
                 .padding()
-                .background(Color.gray.opacity(0.2))
+                .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.top, 10)
             
-            Button(action: {
-                let authenticatedUser = DataModel.shared.authenticate(email: email, password: password)
-                
-                if let admin = authenticatedUser as? Admin {
-                    showAdminInterface = true
-                } else if let doctor = authenticatedUser as? Doctor {
-                    showDoctorInterface = true
-                } else if let patient = authenticatedUser as? Patient {
-                    showPatientInterface = true
+            HStack {
+                Spacer()
+                Button(action: {
+                    // Handle forgot password action
+                }) {
+                    Text("Forgot Password?")
+                        .foregroundColor(.blue)
                 }
-            }) {
-                Text("Sign In")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(10)
+                .padding(.trailing, 20)
             }
-            .padding(.horizontal)
-            .padding(.top, 20)
-            
-            Button(action: {
-                showSignUp = true
-            }) {
-                Text("Don't have an account? Sign Up")
-                    .foregroundColor(.blue)
-            }
-            .padding(.top, 20)
             
             Spacer()
+                .frame(height: 20)
+            
+            Button("Sign In") {
+                let (userType, user) = dataModel.signIn(email: email, password: password)
+                if let user = user {
+                    self.userType = userType
+                    self.user = user
+                    self.signInSuccess = true
+                } else {
+                    self.signInFailed = true
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .padding(.horizontal)
+            
+            Text("Or")
+                .padding(.top, 10)
+            
+            Button(action: {
+                // Handle Apple login action
+            }) {
+                HStack {
+                    Image(systemName: "applelogo")
+                    Text("Sign In with Apple")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.black)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+            }
+            .padding(.horizontal)
+            .padding(.top, 10)
+            
+            Spacer()
+            
+            HStack {
+                Text("Don't have an account?")
+                    .foregroundColor(.gray)
+                Button(action: {
+                    showingSignUp.toggle()
+                }) {
+                    Text("Sign up")
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding(.bottom, 20)
+            
+            if signInFailed {
+                Text("Unauthorized user. Please check your credentials.")
+                    .foregroundColor(.red)
+                    .padding()
+            }
         }
-        .background(Color.white)
-        .ignoresSafeArea()
-        .fullScreenCover(isPresented: $showSignUp) {
+        .sheet(isPresented: $showingSignUp) {
             SignUpView()
         }
-        .fullScreenCover(isPresented: $showAdminInterface) {
-            AdminInterfaceView()
+        .onChange(of: signInSuccess) { newValue in
+            if newValue {
+                print("SignIn Success: \(userType), \(user)")
+            }
         }
-        .fullScreenCover(isPresented: $showDoctorInterface) {
-            DoctorInterfaceView()
-        }
-        .fullScreenCover(isPresented: $showPatientInterface) {
-            PatientInterfaceView()
+        .fullScreenCover(isPresented: $signInSuccess) {
+            if let user = user {
+                HomeView(userType: userType, user: user)
+            }
         }
     }
 }
 
+struct SignInView_Previews: PreviewProvider {
+    static var previews: some View {
+        SignInView().environmentObject(DataModel())
+    }
+}

@@ -1,11 +1,13 @@
 import SwiftUI
 
 @main
-struct MyApp: App {
+struct HospitalApp: App {
+    @StateObject private var dataModel = DataModel()
+    
     var body: some Scene {
         WindowGroup {
             SignInView()
+                .environmentObject(dataModel)
         }
     }
 }
-

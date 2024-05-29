@@ -1,108 +1,45 @@
+// SignUpView.swift
 import SwiftUI
 
 struct SignUpView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var email = ""
     @State private var phoneNumber = ""
     @State private var password = ""
-    @State private var confirmPassword = ""
-    @State private var isDoctor = true
-    @State private var showSignIn = false
+    @State private var name = ""
+    @State private var userType = "Patient"
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
-            Text("Sign Up")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top, 50)
-            
-            HStack {
-                Button(action: {
-                    isDoctor = true
-                }) {
-                    Text("Doctor")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isDoctor ? Color.blue : Color.clear)
-                        .foregroundColor(isDoctor ? Color.white : Color.gray)
-                        .cornerRadius(10)
-                }
-                Button(action: {
-                    isDoctor = false
-                }) {
-                    Text("Patient")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isDoctor ? Color.clear : Color.blue)
-                        .foregroundColor(isDoctor ? Color.gray : Color.white)
-                        .cornerRadius(10)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, 20)
+            TextField("Name", text: $name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
             
             TextField("Email", text: $email)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.top, 20)
             
             TextField("Phone Number", text: $phoneNumber)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.top, 10)
             
             SecureField("Password", text: $password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.top, 10)
             
-            SecureField("Confirm Password", text: $confirmPassword)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.top, 10)
-            
-            Button(action: {
-                if password == confirmPassword {
-                    if isDoctor {
-                        DataModel.shared.addDoctor(email: email, phoneNumber: phoneNumber, password: password, specialty: "Cardiology")
-                    } else {
-                        DataModel.shared.addPatient(email: email, phoneNumber: phoneNumber, password: password, medicalHistory: "Neurology")
-                    }
-                    showSignIn = true
-                }
-            }) {
-                Text("Sign Up")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(10)
+            Picker("User Type", selection: $userType) {
+                Text("Doctor").tag("Doctor")
+                Text("Patient").tag("Patient")
             }
-            .padding(.horizontal)
-            .padding(.top, 20)
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
             
-            Button(action: {
-                showSignIn = true
-            }) {
-                Text("Already have an account? Sign In")
-                    .foregroundColor(.blue)
+            Button("Sign Up") {
+                dataModel.signUp(email: email, phoneNumber: phoneNumber, password: password, name: name, userType: userType)
+                self.presentationMode.wrappedValue.dismiss()
             }
-            .padding(.top, 20)
-            
-            Spacer()
-        }
-        .background(Color.white)
-        .ignoresSafeArea()
-        .fullScreenCover(isPresented: $showSignIn) {
-            SignInView()
+            .padding()
         }
     }
 }
-
