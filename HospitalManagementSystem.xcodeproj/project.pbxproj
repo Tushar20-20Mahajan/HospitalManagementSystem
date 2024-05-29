@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C06FE59C2C078B7900F0C573 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE59B2C078B7900F0C573 /* DataModel.swift */; };
+		C06FE59E2C079CE800F0C573 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE59D2C079CE800F0C573 /* SignUp.swift */; };
+		C06FE5A12C079D6C00F0C573 /* UserInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE5A02C079D6C00F0C573 /* UserInterface.swift */; };
+		C06FE5A32C079D9500F0C573 /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE5A22C079D9500F0C573 /* SignIn.swift */; };
 		C0BFDF082C07884000FB277F /* HospitalManagementSystemApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BFDF072C07884000FB277F /* HospitalManagementSystemApp.swift */; };
 		C0BFDF0A2C07884000FB277F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BFDF092C07884000FB277F /* ContentView.swift */; };
 		C0BFDF0C2C07884100FB277F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BFDF0B2C07884100FB277F /* Assets.xcassets */; };
@@ -14,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C06FE59B2C078B7900F0C573 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		C06FE59D2C079CE800F0C573 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
+		C06FE5A02C079D6C00F0C573 /* UserInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInterface.swift; sourceTree = "<group>"; };
+		C06FE5A22C079D9500F0C573 /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
 		C0BFDF042C07884000FB277F /* HospitalManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HospitalManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0BFDF072C07884000FB277F /* HospitalManagementSystemApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HospitalManagementSystemApp.swift; sourceTree = "<group>"; };
 		C0BFDF092C07884000FB277F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -32,6 +40,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C06FE59A2C078B5E00F0C573 /* Data Models */ = {
+			isa = PBXGroup;
+			children = (
+				C06FE59B2C078B7900F0C573 /* DataModel.swift */,
+			);
+			path = "Data Models";
+			sourceTree = "<group>";
+		};
+		C06FE59F2C079CF000F0C573 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				C06FE59D2C079CE800F0C573 /* SignUp.swift */,
+				C06FE5A02C079D6C00F0C573 /* UserInterface.swift */,
+				C06FE5A22C079D9500F0C573 /* SignIn.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
 		C0BFDEFB2C07884000FB277F = {
 			isa = PBXGroup;
 			children = (
@@ -51,6 +77,8 @@
 		C0BFDF062C07884000FB277F /* HospitalManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
+				C06FE59F2C079CF000F0C573 /* Authentication */,
+				C06FE59A2C078B5E00F0C573 /* Data Models */,
 				C0BFDF072C07884000FB277F /* HospitalManagementSystemApp.swift */,
 				C0BFDF092C07884000FB277F /* ContentView.swift */,
 				C0BFDF0B2C07884100FB277F /* Assets.xcassets */,
@@ -138,7 +166,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0BFDF0A2C07884000FB277F /* ContentView.swift in Sources */,
+				C06FE5A32C079D9500F0C573 /* SignIn.swift in Sources */,
+				C06FE59E2C079CE800F0C573 /* SignUp.swift in Sources */,
 				C0BFDF082C07884000FB277F /* HospitalManagementSystemApp.swift in Sources */,
+				C06FE59C2C078B7900F0C573 /* DataModel.swift in Sources */,
+				C06FE5A12C079D6C00F0C573 /* UserInterface.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
