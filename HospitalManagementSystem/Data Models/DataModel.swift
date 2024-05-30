@@ -5,7 +5,8 @@ struct User: Identifiable, Equatable, Hashable, Codable {
     let email: String
     let phoneNumber: String
     let password: String
-    let name: String
+    let firstName: String
+    let lastName: String
 }
 
 struct Admin: Codable {
@@ -13,15 +14,24 @@ struct Admin: Codable {
     static let adminEmail = "admin@hospital.com"
     static let adminPhoneNumber = "9876543210"
     static let adminPassword = "12345678"
-    static let adminName = "Admin"
+    static let adminFirstName = "Admin"
+    static let adminLastName = "User"
 }
 
 struct Doctor: Codable {
     var user: User
+    let gender: String
+    let qualification: String
+    let specialization: String
+    let medicalLicenceNumber: String
+    let nmcCertificate: Data?
 }
 
 struct Patient: Codable {
     var user: User
+    let age: Int
+    let gender: String
+    let address: String
 }
 
 class DataModel: ObservableObject {
@@ -40,19 +50,52 @@ class DataModel: ObservableObject {
     }
 
     private func initializeAdmins() {
-        let adminUser = User(email: Admin.adminEmail, phoneNumber: Admin.adminPhoneNumber, password: Admin.adminPassword, name: Admin.adminName)
+        let adminUser = User(email: Admin.adminEmail, phoneNumber: Admin.adminPhoneNumber, password: Admin.adminPassword, firstName: Admin.adminFirstName, lastName: Admin.adminLastName)
         self.admins = [adminUser: Admin(user: adminUser)]
     }
 
     private func initializeDoctors() {
-        let doctorUser = User(email: "doctor@hospital.com", phoneNumber: "1234567890", password: "doctorpass", name: "Dr. Smith")
-        self.doctors[doctorUser] = Doctor(user: doctorUser)
+        let doctorUser = User(email: "doctor@hospital.com", phoneNumber: "1234567890", password: "doctorpass", firstName: "John", lastName: "Smith")
+        self.doctors[doctorUser] = Doctor(user: doctorUser, gender: "Male", qualification: "MBBS", specialization: "Cardiology", medicalLicenceNumber: "123456", nmcCertificate: nil)
     }
 
     private func initializePatients() {
-        let patientUser = User(email: "tushar@hospital.com", phoneNumber: "0987654321", password: "patientpass", name: "Tushar Mahajan")
-        self.patients[patientUser] = Patient(user: patientUser)
+            let patientUser = User(email: "patient@hospital.com", phoneNumber: "0987654321", password: "patientpass", firstName: "Tushar", lastName: "Mahajan")
+            self.patients[patientUser] = Patient(user: patientUser, age: 30, gender: "Male", address: "")
+        }
+
+
+    func signUpDoctor(email: String, phoneNumber: String, password: String, firstName: String, lastName: String, gender: String, qualification: String, specialization: String, medicalLicenceNumber: String, nmcCertificate: Data?) {
+        let newUser = User(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName)
+        let newDoctor = Doctor(user: newUser, gender: gender, qualification: qualification, specialization: specialization, medicalLicenceNumber: medicalLicenceNumber, nmcCertificate: nmcCertificate)
+        doctors[newUser] = newDoctor
+        saveDoctorsToFile(doctors: doctors)
     }
+
+    func signUpPatient(email: String, phoneNumber: String, password: String, firstName: String, lastName: String, age: Int, gender: String, address: String) {
+        let newUser = User(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName)
+        let newPatient = Patient(user: newUser, age: age, gender: gender, address: address)
+        patients[newUser] = newPatient
+        savePatientsToFile(patients: patients)
+    }
+
+
+    func signUp(email: String, phoneNumber: String, password: String, firstName: String, lastName: String, userType: String, age: Int? = nil, gender: String = "", qualification: String = "", specialization: String = "", medicalLicenceNumber: String = "", nmcCertificate: Data? = nil, address: String = "") {
+            let newUser = User(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName)
+
+            switch userType {
+            case "Doctor":
+                signUpDoctor(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, gender: gender, qualification: qualification, specialization: specialization, medicalLicenceNumber: medicalLicenceNumber, nmcCertificate: nmcCertificate)
+            case "Patient":
+                if let age = age {
+                    signUpPatient(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, age: age, gender: gender, address: address)
+                } else {
+                    // Handle error: age is required for patient
+                }
+            default:
+                break
+            }
+        }
 
     // Retrieve doctors from file
     func getDoctorsFromFile() -> [User: Doctor]? {
@@ -92,24 +135,6 @@ class DataModel: ObservableObject {
     private static let ArchiveURLForDoctors = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("doctors").appendingPathExtension("plist")
     private static let ArchiveURLForPatients = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("patients").appendingPathExtension("plist")
 
-    func signUp(email: String, phoneNumber: String, password: String, name: String, userType: String) {
-        let newUser = User(email: email, phoneNumber: phoneNumber, password: password, name: name)
-
-        switch userType {
-        case "Doctor":
-            let newDoctor = Doctor(user: newUser)
-            doctors[newUser] = newDoctor
-            saveDoctorsToFile(doctors: doctors)
-        case "Patient":
-            let newPatient = Patient(user: newUser)
-            patients[newUser] = newPatient
-            savePatientsToFile(patients: patients)
-        default:
-            break
-        }
-    }
-
-
     func signIn(email: String, password: String) -> (String, User?) {
         // Check for admin
         for (user, admin) in admins {
@@ -135,5 +160,6 @@ class DataModel: ObservableObject {
         return ("None", nil)
     }
 }
+
 // Instantiate DataModel
 var dataModel = DataModel()

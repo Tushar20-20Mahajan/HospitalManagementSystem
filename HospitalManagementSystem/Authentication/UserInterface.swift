@@ -1,4 +1,3 @@
-// HomeView.swift
 import SwiftUI
 
 struct HomeView: View {
@@ -7,7 +6,7 @@ struct HomeView: View {
     
     var body: some View {
         VStack {
-            Text("Welcome, \(user.name)!")
+            Text("Welcome, \(user.firstName) \(user.lastName)!")
                 .font(.largeTitle)
                 .padding()
             
@@ -49,3 +48,4 @@ struct PatientView: View {
         Text("Patient Interface")
     }
 }
+

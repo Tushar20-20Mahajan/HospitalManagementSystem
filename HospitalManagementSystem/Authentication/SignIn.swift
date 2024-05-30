@@ -104,6 +104,10 @@ struct SignInView: View {
                 }
             }
             .padding(.bottom, 20)
+            .fullScreenCover(isPresented: $showingSignUp) {
+                SignUpView()
+            }
+
             
             if signInFailed {
                 Text("Unauthorized user. Please check your credentials.")
