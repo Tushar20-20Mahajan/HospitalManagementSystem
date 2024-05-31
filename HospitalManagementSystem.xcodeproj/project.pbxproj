@@ -15,6 +15,21 @@
 		C0BFDF0A2C07884000FB277F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BFDF092C07884000FB277F /* ContentView.swift */; };
 		C0BFDF0C2C07884100FB277F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BFDF0B2C07884100FB277F /* Assets.xcassets */; };
 		C0BFDF0F2C07884100FB277F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BFDF0E2C07884100FB277F /* Preview Assets.xcassets */; };
+		C0F145822C09A4F300FCD555 /* AdminTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145812C09A4F200FCD555 /* AdminTabBar.swift */; };
+		C0F145862C09A78600FCD555 /* AdminHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145852C09A78600FCD555 /* AdminHomeView.swift */; };
+		C0F145882C09AB4500FCD555 /* DoctorTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145872C09AB4500FCD555 /* DoctorTabBar.swift */; };
+		C0F1458A2C09AB5C00FCD555 /* PatientTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145892C09AB5C00FCD555 /* PatientTabBar.swift */; };
+		C0F1458C2C09BE7100FCD555 /* DoctorHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1458B2C09BE7100FCD555 /* DoctorHomeView.swift */; };
+		C0F1458E2C09BE7F00FCD555 /* PatientHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1458D2C09BE7F00FCD555 /* PatientHomeView.swift */; };
+		C0F145902C09C6EE00FCD555 /* PatientDetailList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1458F2C09C6EE00FCD555 /* PatientDetailList.swift */; };
+		C0F145922C09C6FA00FCD555 /* Appointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145912C09C6FA00FCD555 /* Appointments.swift */; };
+		C0F145942C09C71B00FCD555 /* DoctorProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145932C09C71B00FCD555 /* DoctorProfile.swift */; };
+		C0F145962C09C76900FCD555 /* PatientProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145952C09C76900FCD555 /* PatientProfile.swift */; };
+		C0F145982C09C7A200FCD555 /* HealthDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145972C09C7A200FCD555 /* HealthDetails.swift */; };
+		C0F1459A2C09C7C200FCD555 /* CategoriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145992C09C7C200FCD555 /* CategoriesList.swift */; };
+		C0F1459C2C09C7DE00FCD555 /* DoctorInsideCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1459B2C09C7DE00FCD555 /* DoctorInsideCategories.swift */; };
+		C0F1459E2C09C7F900FCD555 /* PatientBookingAppointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1459D2C09C7F900FCD555 /* PatientBookingAppointment.swift */; };
+		C0F145A02C09C8CD00FCD555 /* AdminProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F1459F2C09C8CD00FCD555 /* AdminProfile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +42,21 @@
 		C0BFDF092C07884000FB277F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C0BFDF0B2C07884100FB277F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0BFDF0E2C07884100FB277F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C0F145812C09A4F200FCD555 /* AdminTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminTabBar.swift; sourceTree = "<group>"; };
+		C0F145852C09A78600FCD555 /* AdminHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminHomeView.swift; sourceTree = "<group>"; };
+		C0F145872C09AB4500FCD555 /* DoctorTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorTabBar.swift; sourceTree = "<group>"; };
+		C0F145892C09AB5C00FCD555 /* PatientTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientTabBar.swift; sourceTree = "<group>"; };
+		C0F1458B2C09BE7100FCD555 /* DoctorHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorHomeView.swift; sourceTree = "<group>"; };
+		C0F1458D2C09BE7F00FCD555 /* PatientHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHomeView.swift; sourceTree = "<group>"; };
+		C0F1458F2C09C6EE00FCD555 /* PatientDetailList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailList.swift; sourceTree = "<group>"; };
+		C0F145912C09C6FA00FCD555 /* Appointments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointments.swift; sourceTree = "<group>"; };
+		C0F145932C09C71B00FCD555 /* DoctorProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorProfile.swift; sourceTree = "<group>"; };
+		C0F145952C09C76900FCD555 /* PatientProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientProfile.swift; sourceTree = "<group>"; };
+		C0F145972C09C7A200FCD555 /* HealthDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDetails.swift; sourceTree = "<group>"; };
+		C0F145992C09C7C200FCD555 /* CategoriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesList.swift; sourceTree = "<group>"; };
+		C0F1459B2C09C7DE00FCD555 /* DoctorInsideCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorInsideCategories.swift; sourceTree = "<group>"; };
+		C0F1459D2C09C7F900FCD555 /* PatientBookingAppointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientBookingAppointment.swift; sourceTree = "<group>"; };
+		C0F1459F2C09C8CD00FCD555 /* AdminProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminProfile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +107,7 @@
 		C0BFDF062C07884000FB277F /* HospitalManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
+				C0F145802C09A22100FCD555 /* TabBars */,
 				C0F1457F2C0987F500FCD555 /* Admin */,
 				C0F1457E2C0987EB00FCD555 /* Doctors */,
 				C0F1457D2C0987E300FCD555 /* Patient */,
@@ -101,6 +132,10 @@
 		C0F1457D2C0987E300FCD555 /* Patient */ = {
 			isa = PBXGroup;
 			children = (
+				C0F145A72C09D78400FCD555 /* PatientsHomeViewComponents */,
+				C0F145AA2C09D87600FCD555 /* PatientBookingComponents */,
+				C0F145A92C09D83900FCD555 /* CategoriesListComponents */,
+				C0F145A82C09D7A900FCD555 /* PatientsProfileComponents */,
 			);
 			path = Patient;
 			sourceTree = "<group>";
@@ -108,6 +143,10 @@
 		C0F1457E2C0987EB00FCD555 /* Doctors */ = {
 			isa = PBXGroup;
 			children = (
+				C0F145A12C09CA4700FCD555 /* HomeViewComponents */,
+				C0F145A32C09CA9D00FCD555 /* AppointmentsComponents */,
+				C0F145A22C09CA6A00FCD555 /* PatientDetailListComponents */,
+				C0F145A42C09CB5D00FCD555 /* DoctorProfileComponents */,
 			);
 			path = Doctors;
 			sourceTree = "<group>";
@@ -115,8 +154,102 @@
 		C0F1457F2C0987F500FCD555 /* Admin */ = {
 			isa = PBXGroup;
 			children = (
+				C0F145A52C09D6F100FCD555 /* AdminHomeViewComponents */,
+				C0F145A62C09D70800FCD555 /* AdminProfileComponents */,
 			);
 			path = Admin;
+			sourceTree = "<group>";
+		};
+		C0F145802C09A22100FCD555 /* TabBars */ = {
+			isa = PBXGroup;
+			children = (
+				C0F145812C09A4F200FCD555 /* AdminTabBar.swift */,
+				C0F145872C09AB4500FCD555 /* DoctorTabBar.swift */,
+				C0F145892C09AB5C00FCD555 /* PatientTabBar.swift */,
+			);
+			path = TabBars;
+			sourceTree = "<group>";
+		};
+		C0F145A12C09CA4700FCD555 /* HomeViewComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1458B2C09BE7100FCD555 /* DoctorHomeView.swift */,
+			);
+			path = HomeViewComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A22C09CA6A00FCD555 /* PatientDetailListComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1458F2C09C6EE00FCD555 /* PatientDetailList.swift */,
+			);
+			path = PatientDetailListComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A32C09CA9D00FCD555 /* AppointmentsComponents */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AppointmentsComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A42C09CB5D00FCD555 /* DoctorProfileComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F145912C09C6FA00FCD555 /* Appointments.swift */,
+				C0F145932C09C71B00FCD555 /* DoctorProfile.swift */,
+			);
+			path = DoctorProfileComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A52C09D6F100FCD555 /* AdminHomeViewComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F145852C09A78600FCD555 /* AdminHomeView.swift */,
+			);
+			path = AdminHomeViewComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A62C09D70800FCD555 /* AdminProfileComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1459F2C09C8CD00FCD555 /* AdminProfile.swift */,
+			);
+			path = AdminProfileComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A72C09D78400FCD555 /* PatientsHomeViewComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1458D2C09BE7F00FCD555 /* PatientHomeView.swift */,
+			);
+			path = PatientsHomeViewComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A82C09D7A900FCD555 /* PatientsProfileComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F145952C09C76900FCD555 /* PatientProfile.swift */,
+			);
+			path = PatientsProfileComponents;
+			sourceTree = "<group>";
+		};
+		C0F145A92C09D83900FCD555 /* CategoriesListComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1459B2C09C7DE00FCD555 /* DoctorInsideCategories.swift */,
+				C0F145992C09C7C200FCD555 /* CategoriesList.swift */,
+			);
+			path = CategoriesListComponents;
+			sourceTree = "<group>";
+		};
+		C0F145AA2C09D87600FCD555 /* PatientBookingComponents */ = {
+			isa = PBXGroup;
+			children = (
+				C0F1459D2C09C7F900FCD555 /* PatientBookingAppointment.swift */,
+				C0F145972C09C7A200FCD555 /* HealthDetails.swift */,
+			);
+			path = PatientBookingComponents;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,11 +323,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0BFDF0A2C07884000FB277F /* ContentView.swift in Sources */,
+				C0F145A02C09C8CD00FCD555 /* AdminProfile.swift in Sources */,
+				C0F1458E2C09BE7F00FCD555 /* PatientHomeView.swift in Sources */,
+				C0F145902C09C6EE00FCD555 /* PatientDetailList.swift in Sources */,
+				C0F1458C2C09BE7100FCD555 /* DoctorHomeView.swift in Sources */,
 				C06FE5A32C079D9500F0C573 /* SignIn.swift in Sources */,
+				C0F145982C09C7A200FCD555 /* HealthDetails.swift in Sources */,
+				C0F145962C09C76900FCD555 /* PatientProfile.swift in Sources */,
 				C06FE59E2C079CE800F0C573 /* SignUp.swift in Sources */,
+				C0F145862C09A78600FCD555 /* AdminHomeView.swift in Sources */,
 				C0BFDF082C07884000FB277F /* HospitalManagementSystemApp.swift in Sources */,
+				C0F1459C2C09C7DE00FCD555 /* DoctorInsideCategories.swift in Sources */,
+				C0F1458A2C09AB5C00FCD555 /* PatientTabBar.swift in Sources */,
+				C0F145822C09A4F300FCD555 /* AdminTabBar.swift in Sources */,
 				C06FE59C2C078B7900F0C573 /* DataModel.swift in Sources */,
 				C06FE5A12C079D6C00F0C573 /* UserInterface.swift in Sources */,
+				C0F145882C09AB4500FCD555 /* DoctorTabBar.swift in Sources */,
+				C0F1459A2C09C7C200FCD555 /* CategoriesList.swift in Sources */,
+				C0F145922C09C6FA00FCD555 /* Appointments.swift in Sources */,
+				C0F145942C09C71B00FCD555 /* DoctorProfile.swift in Sources */,
+				C0F1459E2C09C7F900FCD555 /* PatientBookingAppointment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

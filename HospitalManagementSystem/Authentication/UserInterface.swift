@@ -6,20 +6,14 @@ struct HomeView: View {
     
     var body: some View {
         VStack {
-            Text("Welcome, \(user.firstName) \(user.lastName)!")
-                .font(.largeTitle)
-                .padding()
             
-            Text("You are logged in as a \(userType).")
-                .font(.title)
-                .padding()
             
             if userType == "Admin" {
-                AdminView()
+                AdminTabBar(user: user)
             } else if userType == "Doctor" {
-                DoctorView()
+                DoctorTabBar(user: user)
             } else if userType == "Patient" {
-                PatientView()
+                PatientTabBar(user: user)
             } else {
                 Text("Unknown user type")
             }
@@ -31,21 +25,4 @@ struct HomeView: View {
     }
 }
 
-struct AdminView: View {
-    var body: some View {
-        Text("Admin Interface")
-    }
-}
-
-struct DoctorView: View {
-    var body: some View {
-        Text("Doctor Interface")
-    }
-}
-
-struct PatientView: View {
-    var body: some View {
-        Text("Patient Interface")
-    }
-}
 
