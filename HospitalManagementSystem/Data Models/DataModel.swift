@@ -1,4 +1,6 @@
 import Foundation
+import SwiftUI
+import Combine
 
 struct User: Identifiable, Equatable, Hashable, Codable {
     let id = UUID()
@@ -7,6 +9,14 @@ struct User: Identifiable, Equatable, Hashable, Codable {
     let password: String
     let firstName: String
     let lastName: String
+
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.email == rhs.email
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(email)
+    }
 }
 
 struct Admin: Codable {
@@ -35,35 +45,21 @@ struct Patient: Codable {
 }
 
 class DataModel: ObservableObject {
-    @Published private var admins: [User: Admin]
-    @Published private var doctors: [User: Doctor] = [:]
-    @Published private var patients: [User: Patient] = [:]
+    @Published private(set) var admins: [User: Admin] = [:]
+    @Published private(set) var doctors: [User: Doctor] = [:]
+    @Published private(set) var patients: [User: Patient] = [:]
 
     init() {
         self.admins = [:]
-        self.doctors = [:]
-        self.patients = [:]
-
+        self.doctors = DataModel.loadFromFileDoctors() ?? [:]
+        self.patients = DataModel.loadFromFilePatients() ?? [:]
         initializeAdmins()
-        initializeDoctors()
-        initializePatients()
     }
 
     private func initializeAdmins() {
         let adminUser = User(email: Admin.adminEmail, phoneNumber: Admin.adminPhoneNumber, password: Admin.adminPassword, firstName: Admin.adminFirstName, lastName: Admin.adminLastName)
         self.admins = [adminUser: Admin(user: adminUser)]
     }
-
-    private func initializeDoctors() {
-        let doctorUser = User(email: "doctor@hospital.com", phoneNumber: "1234567890", password: "doctorpass", firstName: "John", lastName: "Smith")
-        self.doctors[doctorUser] = Doctor(user: doctorUser, gender: "Male", qualification: "MBBS", specialization: "Cardiology", medicalLicenceNumber: "123456", nmcCertificate: nil)
-    }
-
-    private func initializePatients() {
-            let patientUser = User(email: "patient@hospital.com", phoneNumber: "0987654321", password: "patientpass", firstName: "Tushar", lastName: "Mahajan")
-            self.patients[patientUser] = Patient(user: patientUser, age: 30, gender: "Male", address: "")
-        }
-
 
     func signUpDoctor(email: String, phoneNumber: String, password: String, firstName: String, lastName: String, gender: String, qualification: String, specialization: String, medicalLicenceNumber: String, nmcCertificate: Data?) {
         let newUser = User(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName)
@@ -79,86 +75,84 @@ class DataModel: ObservableObject {
         savePatientsToFile(patients: patients)
     }
 
-
     func signUp(email: String, phoneNumber: String, password: String, firstName: String, lastName: String, userType: String, age: Int? = nil, gender: String = "", qualification: String = "", specialization: String = "", medicalLicenceNumber: String = "", nmcCertificate: Data? = nil, address: String = "") {
-            let newUser = User(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName)
-
-            switch userType {
-            case "Doctor":
-                signUpDoctor(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, gender: gender, qualification: qualification, specialization: specialization, medicalLicenceNumber: medicalLicenceNumber, nmcCertificate: nmcCertificate)
-            case "Patient":
-                if let age = age {
-                    signUpPatient(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, age: age, gender: gender, address: address)
-                } else {
-                    // Handle error: age is required for patient
-                }
-            default:
-                break
+        switch userType {
+        case "Doctor":
+            signUpDoctor(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, gender: gender, qualification: qualification, specialization: specialization, medicalLicenceNumber: medicalLicenceNumber, nmcCertificate: nmcCertificate)
+        case "Patient":
+            if let age = age {
+                signUpPatient(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, age: age, gender: gender, address: address)
+            } else {
+                // Handle error: age is required for patient
             }
+        default:
+            break
         }
+    }
 
     // Retrieve doctors from file
-    func getDoctorsFromFile() -> [User: Doctor]? {
-        guard let codedDoctors = try? Data(contentsOf: DataModel.ArchiveURLForDoctors) else {
+    static func loadFromFileDoctors() -> [User: Doctor]? {
+        guard let codedDoctors = try? Data(contentsOf: ArchiveURLForDoctors) else {
+            print("Failed to load doctors data from file.")
             return nil
         }
         let propertyListDecoder = PropertyListDecoder()
-        return try? propertyListDecoder.decode([User: Doctor].self, from: codedDoctors)
+        let doctors = try? propertyListDecoder.decode([User: Doctor].self, from: codedDoctors)
+        print("Loaded doctors: \(doctors)")
+        return doctors
     }
 
     // Save doctors to file
     func saveDoctorsToFile(doctors: [User: Doctor]) {
         let propertyListEncoder = PropertyListEncoder()
         if let codedDoctors = try? propertyListEncoder.encode(doctors) {
-            try? codedDoctors.write(to: DataModel.ArchiveURLForDoctors, options: .withoutOverwriting)
+            try? codedDoctors.write(to: DataModel.ArchiveURLForDoctors, options: .atomic)
+            print("Saved doctors: \(doctors)")
+        } else {
+            print("Failed to save doctors data.")
         }
     }
 
     // Retrieve patients from file
-    func getPatientsFromFile() -> [User: Patient]? {
-        guard let codedPatients = try? Data(contentsOf: DataModel.ArchiveURLForPatients) else {
+    static func loadFromFilePatients() -> [User: Patient]? {
+        guard let codedPatients = try? Data(contentsOf: ArchiveURLForPatients) else {
+            print("Failed to load patients data from file.")
             return nil
         }
         let propertyListDecoder = PropertyListDecoder()
-        return try? propertyListDecoder.decode([User: Patient].self, from: codedPatients)
+        let patients = try? propertyListDecoder.decode([User: Patient].self, from: codedPatients)
+        print("Loaded patients: \(patients)")
+        return patients
     }
 
     // Save patients to file
     func savePatientsToFile(patients: [User: Patient]) {
         let propertyListEncoder = PropertyListEncoder()
         if let codedPatients = try? propertyListEncoder.encode(patients) {
-            try? codedPatients.write(to: DataModel.ArchiveURLForPatients, options: .withoutOverwriting)
+            try? codedPatients.write(to: DataModel.ArchiveURLForPatients, options: .atomic)
+            print("Saved patients: \(patients)")
+        } else {
+            print("Failed to save patients data.")
         }
     }
-
-    // File URLs for doctors and patients data
-    private static let ArchiveURLForDoctors = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("doctors").appendingPathExtension("plist")
-    private static let ArchiveURLForPatients = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("patients").appendingPathExtension("plist")
 
     func signIn(email: String, password: String) -> (String, User?) {
-        // Check for admin
-        for (user, admin) in admins {
-            if user.email == email && user.password == password {
-                return ("Admin", user)
-            }
+        if let admin = admins.values.first(where: { $0.user.email == email && $0.user.password == password }) {
+            return ("Admin", admin.user)
+        } else if let doctor = doctors.values.first(where: { $0.user.email == email && $0.user.password == password }) {
+            return ("Doctor", doctor.user)
+        } else if let patient = patients.values.first(where: { $0.user.email == email && $0.user.password == password }) {
+            return ("Patient", patient.user)
+        } else {
+            return ("None", nil)
         }
-
-        // Check for doctor
-        for (user, doctor) in doctors {
-            if user.email == email && user.password == password {
-                return ("Doctor", user)
-            }
-        }
-
-        // Check for patient
-        for (user, patient) in patients {
-            if user.email == email && user.password == password {
-                return ("Patient", user)
-            }
-        }
-
-        return ("None", nil)
     }
+}
+
+extension DataModel {
+    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let ArchiveURLForDoctors = DocumentsDirectory.appendingPathComponent("doctors").appendingPathExtension("plist")
+    static let ArchiveURLForPatients = DocumentsDirectory.appendingPathComponent("patients").appendingPathExtension("plist")
 }
 
 // Instantiate DataModel

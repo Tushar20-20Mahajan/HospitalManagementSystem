@@ -77,6 +77,9 @@
 		C0BFDF062C07884000FB277F /* HospitalManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
+				C0F1457F2C0987F500FCD555 /* Admin */,
+				C0F1457E2C0987EB00FCD555 /* Doctors */,
+				C0F1457D2C0987E300FCD555 /* Patient */,
 				C06FE59F2C079CF000F0C573 /* Authentication */,
 				C06FE59A2C078B5E00F0C573 /* Data Models */,
 				C0BFDF072C07884000FB277F /* HospitalManagementSystemApp.swift */,
@@ -93,6 +96,27 @@
 				C0BFDF0E2C07884100FB277F /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C0F1457D2C0987E300FCD555 /* Patient */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Patient;
+			sourceTree = "<group>";
+		};
+		C0F1457E2C0987EB00FCD555 /* Doctors */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Doctors;
+			sourceTree = "<group>";
+		};
+		C0F1457F2C0987F500FCD555 /* Admin */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Admin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
