@@ -1,8 +1,5 @@
-import Foundation
 import SwiftUI
-import Combine
 import PhotosUI
-import UniformTypeIdentifiers
 
 struct DoctorOnboardingForm: View {
     var userType: String
@@ -21,41 +18,10 @@ struct DoctorOnboardingForm: View {
     @State private var profilePicture: Data? = nil
     @State private var selectedProfilePicture: PhotosPickerItem? = nil
     @ObservedObject var dataModel: DataModel
-    
+
     @State private var showingDocumentPicker = false
     @State private var showingProfilePicturePicker = false
-    
-    func loadProfilePicture(_ newItem: PhotosPickerItem?) {
-        if let newItem = newItem {
-            newItem.loadTransferable(type: Data.self) { result in
-                switch result {
-                case .success(let data):
-                    if let data = data {
-                        self.profilePicture = data
-                    }
-                case .failure(let error):
-                    print("Error loading profile picture data: \(error)")
-                }
-            }
-        }
-    }
 
-    func loadDocuments(_ newItems: [PhotosPickerItem]) {
-        selectedPhotosData.removeAll()
-        for newItem in newItems {
-            newItem.loadTransferable(type: Data.self) { result in
-                switch result {
-                case .success(let data):
-                    if let data = data {
-                        self.selectedPhotosData.append(data)
-                    }
-                case .failure(let error):
-                    print("Error loading data: \(error)")
-                }
-            }
-        }
-    }
-    
     func validateAndSaveDoctorInformation() {
         emptyFields.removeAll()
 
@@ -66,31 +32,19 @@ struct DoctorOnboardingForm: View {
 
         if !emptyFields.isEmpty {
             showAlert = true
-        } else {
-            saveDoctorInformation()
         }
+//        else {
+//            saveDoctorInformation()
+//        }
     }
 
-    private func saveDoctorInformation() {
- 
-        let newDoctor = Doctor(user: user, specialty: specialization, medicalRegNumber: medicalRegNumber, consultationFees: consultationFees, degree: degree, previousPositions: previousPositions, biography: biography, profilePicture: profilePicture, documents: selectedPhotosData)
-        dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.append(newDoctor)
-        
-        // Print the data instance of the new doctor
-        print("New Doctor Information:")
-        print("User: \(user)")
-        print("Specialty: \(specialization)")
-        print("Medical Registration Number: \(medicalRegNumber)")
-        print("Consultation Fees: \(consultationFees)")
-        print("Degree: \(degree)")
-        print("Previous Positions: \(previousPositions)")
-        print("Biography: \(biography)")
-        // Print other properties as needed
-        print(dataModel.doctorsForApprovalAndInTheDataBaseOfHospital)
-        
-        presentationMode.wrappedValue.dismiss()
-    }
-    
+//    private func saveDoctorInformation() {
+//        let newDoctor = Doctor(user: user, specialty: specialization, medicalRegNumber: medicalRegNumber, consultationFees: consultationFees, degree: degree, previousPositions: previousPositions, biography: biography, profilePicture: profilePicture, documents: selectedPhotosData)
+//        dataModel.saveDoctorInformation(newDoctor)
+//
+//        presentationMode.wrappedValue.dismiss()
+//    }
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -105,7 +59,12 @@ struct DoctorOnboardingForm: View {
                 .padding()
                 .navigationTitle("Fill Information")
                 .navigationBarItems(trailing: Button("Submit") {
-                   validateAndSaveDoctorInformation()
+    //                validateAndSaveDoctorInformation()
+                    let newDoctor = Doctor(user: user, specialty: specialization, medicalRegNumber: medicalRegNumber, consultationFees: consultationFees, degree: degree, previousPositions: previousPositions, biography: biography, profilePicture: profilePicture, documents: selectedPhotosData)
+                    dataModel.saveDoctorInformation(newDoctor)
+
+                    print(dataModel.doctorsForApprovalAndInTheDataBaseOfHospital)
+                    presentationMode.wrappedValue.dismiss()
                 })
                 .onTapGesture {
                     hideKeyboard()
@@ -129,134 +88,116 @@ struct DoctorOnboardingForm: View {
             print("User: \(user)")
         }
     }
-    
+
     private var profilePictureSection: some View {
-        Section(header: Text("Profile Picture")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                VStack {
-                    if let profilePicture = profilePicture, let uiImage = UIImage(data: profilePicture) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 150)
-                            .clipShape(Circle())
-                            .padding(.bottom, 10)
-                    } else {
-                        Image(systemName: "person.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 150)
-                            .clipShape(Circle())
-                            .padding(.bottom, 10)
-                    }
-                    
-                    Button(action: {
-                        showingProfilePicturePicker = true
-                    }) {
-                        HStack {
-                            Image(systemName: "camera.fill")
-                            Text("Upload Profile Picture")
-                        }
+        Section(header: Text("Profile Picture").font(.headline).padding(.bottom, 5)) {
+            VStack {
+                if let profilePicture = profilePicture, let uiImage = UIImage(data: profilePicture) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 150)
+                        .clipShape(Circle())
+                        .padding(.bottom, 10)
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 150)
+                        .clipShape(Circle())
+                        .padding(.bottom, 10)
+                }
+
+                Button(action: {
+                    showingProfilePicturePicker = true
+                }) {
+                    HStack {
+                        Image(systemName: "camera.fill")
+                        Text("Upload Profile Picture")
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal)
             }
-            .frame(maxWidth: .infinity, alignment: .center)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
-    
+
     private var aboutSection: some View {
-        Section(header: Text("About")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                Group {
-                    FormRowView(icon: "graduationcap.fill", placeholder: "Biography", text: $biography, keyboardType: .default, isHighlighted: emptyFields.contains("Biography"))
-                }
-            }
+        Section(header: Text("About").font(.headline).padding(.bottom, 5)) {
+            FormRowView(icon: "graduationcap.fill", placeholder: "Biography", text: $biography, keyboardType: .default, isHighlighted: emptyFields.contains("Biography"))
+        }
     }
-    
+
     private var professionalDetailsSection: some View {
-        Section(header: Text("Professional Details")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                Group {
-                    Picker("Specialization", selection: $specialization) {
-                        Text("Select Specialization").tag("Select Specialization")
-                        ForEach(dataModel.specialties, id: \.id) { specialty in
-                            Text(specialty.name).tag(specialty.name)
-                        }
+        Section(header: Text("Professional Details").font(.headline).padding(.bottom, 5)) {
+            Group {
+                Picker("Specialization", selection: $specialization) {
+                    Text("Select Specialization").tag("Select Specialization")
+                    ForEach(dataModel.specialties, id: \.id) { specialty in
+                        Text(specialty.name).tag(specialty.name)
                     }
-                    .padding(.horizontal)
-                    
-                    FormRowView(icon: "number.circle.fill", placeholder: "Medical Registration Number", text: $medicalRegNumber, keyboardType: .numbersAndPunctuation, isHighlighted: emptyFields.contains("Medical Registration Number"))
-                    
-                    FormRowView(icon: "dollarsign.circle.fill", placeholder: "Consultation Fees", text: $consultationFees, keyboardType: .decimalPad, isHighlighted: emptyFields.contains("Consultation Fees"))
                 }
+                .padding(.horizontal)
+
+                FormRowView(icon: "number.circle.fill", placeholder: "Medical Registration Number", text: $medicalRegNumber, keyboardType: .numbersAndPunctuation, isHighlighted: emptyFields.contains("Medical Registration Number"))
+
+                FormRowView(icon: "dollarsign.circle.fill", placeholder: "Consultation Fees", text: $consultationFees, keyboardType: .decimalPad, isHighlighted: emptyFields.contains("Consultation Fees"))
             }
+        }
     }
-    
+
     private var qualificationsSection: some View {
-        Section(header: Text("Qualifications")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                Group {
-                    FormRowView(icon: "graduationcap.fill", placeholder: "Qualification", text: $degree, keyboardType: .default, isHighlighted: emptyFields.contains("Degree"))
-                }
-            }
+        Section(header: Text("Qualifications").font(.headline).padding(.bottom, 5)) {
+            FormRowView(icon: "graduationcap.fill", placeholder: "Qualification", text: $degree, keyboardType: .default, isHighlighted: emptyFields.contains("Degree"))
+        }
     }
-    
+
     private var professionalExperienceSection: some View {
-        Section(header: Text("Professional Experience")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                Group {
-                    FormRowView(icon: "briefcase.fill", placeholder: "Experience", text: $previousPositions, keyboardType: .default, isHighlighted: emptyFields.contains("Previous Positions"))
-                }
-            }
+        Section(header: Text("Professional Experience").font(.headline).padding(.bottom, 5)) {
+            FormRowView(icon: "briefcase.fill", placeholder: "Experience", text: $previousPositions, keyboardType: .default, isHighlighted: emptyFields.contains("Previous Positions"))
+        }
     }
-    
+
     private var documentUploadSection: some View {
-        Section(header: Text("Document Upload")
-            .font(.headline)
-            .padding(.bottom, 5)) {
-                VStack {
-                    Button(action: {
-                        showingDocumentPicker = true
-                    }) {
-                        HStack {
-                            Image(systemName: "doc.fill.badge.plus")
-                            Text("Select Documents")
-                        }
-                    }
-                    
-                    if !selectedPhotosData.isEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(0..<selectedPhotosData.count, id: \.self) { index in
-                                    VStack {
-                                        Image(uiImage: UIImage(data: selectedPhotosData[index])!)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                            .cornerRadius(10)
-                                        
-                                        Button(action: {
-                                            selectedPhotosData.remove(at: index)
-                                        }) {
-                                            Text("Remove")
-                                                .foregroundColor(.red)
-                                        }
-                                    }
-                                    .frame(width: 100)
-                                }
-                            }
-                            .padding(.vertical, 5)
-                        }
-                        .frame(height: 120) // Adjust height as needed
+        Section(header: Text("Document Upload").font(.headline).padding(.bottom, 5)) {
+            VStack {
+                Button(action: {
+                    showingDocumentPicker = true
+                }) {
+                    HStack {
+                        Image(systemName: "doc.fill.badge.plus")
+                        Text("Select Documents")
                     }
                 }
+
+                if !selectedPhotosData.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(0..<selectedPhotosData.count, id: \.self) { index in
+                                VStack {
+                                    Image(uiImage: UIImage(data: selectedPhotosData[index])!)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                        .cornerRadius(10)
+
+                                    Button(action: {
+                                        selectedPhotosData.remove(at: index)
+                                    }) {
+                                        Text("Remove")
+                                            .foregroundColor(.red)
+                                    }
+                                }
+                                .frame(width: 100)
+                            }
+                        }
+                        .padding(.vertical, 5)
+                    }
+                    .frame(height: 120) // Adjust height as needed
+                }
             }
+        }
     }
 }
 
@@ -266,7 +207,7 @@ struct FormRowView: View {
     @Binding var text: String
     var keyboardType: UIKeyboardType
     var isHighlighted: Bool = false
-    
+
     var body: some View {
         HStack {
             Image(systemName: icon)
@@ -284,15 +225,8 @@ struct FormRowView: View {
         .padding(.horizontal)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(isHighlighted ? Color.red : Color.clear, lineWidth: 2)
-                .padding(.horizontal)
+                .stroke(isHighlighted ? Color.red : Color.clear, lineWidth: 1)
         )
-    }
-}
-
-extension View {
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
@@ -370,3 +304,10 @@ struct ProfilePicturePickerView: UIViewControllerRepresentable {
 }
 
 
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+                                            

@@ -48,7 +48,7 @@ struct Admin: Codable {
     static let adminAddress = "Admin Address"
 }
 
-struct Doctor: Codable  {
+struct Doctor: Codable , Identifiable {
     var id: UUID { user.id }
     var user: User
     let specialty: String
@@ -89,6 +89,24 @@ class DataModel: ObservableObject {
         Specialty(imageName: "Phisio", name: "Physiotherapist", description: "Physical therapy", doctors: [])
     ]
     @Published var doctorsForApprovalAndInTheDataBaseOfHospital: [Doctor] = []
+    func saveDoctorInformation(_ doctor: Doctor) {
+           doctorsForApprovalAndInTheDataBaseOfHospital.append(doctor)
+       }
+    func approveDoctor(_ doctor: Doctor) {
+        if let index = specialties.firstIndex(where: { $0.name == doctor.specialty }) {
+            specialties[index].doctors.append(doctor)
+        } else {
+            if let existingSpecialty = specialties.first(where: { $0.name == doctor.specialty }) {
+                let newSpecialty = Specialty(imageName: existingSpecialty.imageName, name: existingSpecialty.name, description: existingSpecialty.description, doctors: [doctor])
+                specialties.append(newSpecialty)
+            }
+        }
+        doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
+    }
+
+    func rejectDoctor(_ doctor: User) {
+        doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.user.id == doctor.id }
+    }
 
     init() {
         self.admins = [:]
