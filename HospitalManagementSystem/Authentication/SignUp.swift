@@ -13,16 +13,11 @@ struct SignUpView: View {
     @State private var lastName = ""
     @State private var age = ""
     @State private var gender = "Male"
-    @State private var qualification = ""
-    @State private var specialization = ""
-    @State private var medicalLicenceNumber = ""
-    @State private var nmcCertificate: Data? = nil
     @State private var address = ""
     
     @State private var userType = "Patient"
     @State private var isPasswordValid = false
     @State private var signUpAttempted = false
-    @State private var showingDocumentPicker = false
     
     let genders = ["Male", "Female", "Other"]
     
@@ -51,26 +46,25 @@ struct SignUpView: View {
                     }
                     .padding(.horizontal)
                     
-                    HStack {
-                        TextField("Age", text: $age)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                        
-                        Picker("Gender", selection: $gender) {
-                            ForEach(genders, id: \.self) { gender in
-                                Text(gender).tag(gender)
-                            }
+                    TextField("Age", text: $age)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                    
+                    Picker("Gender", selection: $gender) {
+                        ForEach(genders, id: \.self) { gender in
+                            Text(gender).tag(gender)
                         }
-                        .pickerStyle(MenuPickerStyle())
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
                     }
+                    .pickerStyle(MenuPickerStyle())
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
                     .padding(.horizontal)
-                        TextField("Address", text: $address)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal)
-    
+                    
+                    TextField("Address", text: $address)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
                     
                     TextField("Phone Number", text: $phoneNumber)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -99,8 +93,6 @@ struct SignUpView: View {
                     }
                 }
                 
-                
-                
                 Button(action: {
                     signUpAttempted = true
                     signUp()
@@ -115,25 +107,6 @@ struct SignUpView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top)
-                
-                Text("OR")
-                    .padding()
-                
-                Button(action: {
-                    // Code to handle Sign up with Apple
-                }) {
-                    HStack {
-                        Image(systemName: "applelogo")
-                        Text("Sign up with Apple")
-                            .fontWeight(.bold)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.black)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-                .padding(.horizontal)
                 
                 Spacer()
                 
@@ -150,7 +123,6 @@ struct SignUpView: View {
                 .padding(.bottom)
             }
         }
-       
     }
     
     private func signUp() {
@@ -162,9 +134,9 @@ struct SignUpView: View {
         }
         
         if userType == "Doctor" {
-            dataModel.signUpDoctor(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, gender: gender, qualification: qualification, specialization: specialization, medicalLicenceNumber: medicalLicenceNumber, nmcCertificate: nmcCertificate)
+            dataModel.signUp(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, userType: userType, age: Int(age) ?? 0, gender: gender, address: address)
         } else {
-            dataModel.signUpPatient(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, age: Int(age) ?? 0, gender: gender, address: address)
+            dataModel.signUp(email: email, phoneNumber: phoneNumber, password: password, firstName: firstName, lastName: lastName, userType: userType, age: Int(age) ?? 0, gender: gender, address: address)
         }
         
         self.presentationMode.wrappedValue.dismiss()

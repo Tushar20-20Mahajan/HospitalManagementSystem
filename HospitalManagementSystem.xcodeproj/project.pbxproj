@@ -107,12 +107,12 @@
 		C0BFDF062C07884000FB277F /* HospitalManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
+				C06FE59A2C078B5E00F0C573 /* Data Models */,
 				C0F145802C09A22100FCD555 /* TabBars */,
 				C0F1457F2C0987F500FCD555 /* Admin */,
 				C0F1457E2C0987EB00FCD555 /* Doctors */,
 				C0F1457D2C0987E300FCD555 /* Patient */,
 				C06FE59F2C079CF000F0C573 /* Authentication */,
-				C06FE59A2C078B5E00F0C573 /* Data Models */,
 				C0BFDF072C07884000FB277F /* HospitalManagementSystemApp.swift */,
 				C0BFDF092C07884000FB277F /* ContentView.swift */,
 				C0BFDF0B2C07884100FB277F /* Assets.xcassets */,
