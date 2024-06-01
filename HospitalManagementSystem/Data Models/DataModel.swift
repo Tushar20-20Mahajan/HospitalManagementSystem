@@ -48,7 +48,8 @@ struct Admin: Codable {
     static let adminAddress = "Admin Address"
 }
 
-struct Doctor: Codable {
+struct Doctor: Codable  {
+    var id: UUID { user.id }
     var user: User
     let specialty: String
     var medicalRegNumber: String
@@ -87,6 +88,9 @@ class DataModel: ObservableObject {
         Specialty(imageName: "Teeth", name: "Dentist", description: "Teeth and oral health", doctors: []),
         Specialty(imageName: "Phisio", name: "Physiotherapist", description: "Physical therapy", doctors: [])
     ]
+    @Published var doctorsForApprovalAndInTheDataBaseOfHospital:[Doctor] = []
+    
+
 
     init() {
         self.admins = [:]

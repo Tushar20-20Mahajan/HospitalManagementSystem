@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C058D51E2C0B96AC00B20198 /* DoctorsOnboardingForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C058D51D2C0B96AB00B20198 /* DoctorsOnboardingForm.swift */; };
 		C06FE59C2C078B7900F0C573 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE59B2C078B7900F0C573 /* DataModel.swift */; };
 		C06FE59E2C079CE800F0C573 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE59D2C079CE800F0C573 /* SignUp.swift */; };
 		C06FE5A12C079D6C00F0C573 /* UserInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06FE5A02C079D6C00F0C573 /* UserInterface.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C058D51D2C0B96AB00B20198 /* DoctorsOnboardingForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorsOnboardingForm.swift; sourceTree = "<group>"; };
 		C06FE59B2C078B7900F0C573 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		C06FE59D2C079CE800F0C573 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		C06FE5A02C079D6C00F0C573 /* UserInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInterface.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				C0F1458B2C09BE7100FCD555 /* DoctorHomeView.swift */,
+				C058D51D2C0B96AB00B20198 /* DoctorsOnboardingForm.swift */,
 			);
 			path = HomeViewComponents;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				C0F145882C09AB4500FCD555 /* DoctorTabBar.swift in Sources */,
 				C0F1459A2C09C7C200FCD555 /* CategoriesList.swift in Sources */,
 				C0F145922C09C6FA00FCD555 /* Appointments.swift in Sources */,
+				C058D51E2C0B96AC00B20198 /* DoctorsOnboardingForm.swift in Sources */,
 				C0F145942C09C71B00FCD555 /* DoctorProfile.swift in Sources */,
 				C0F1459E2C09C7F900FCD555 /* PatientBookingAppointment.swift in Sources */,
 			);

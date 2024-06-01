@@ -9,7 +9,7 @@ struct DoctorTabBar: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            Text("Doctors")
+            DoctorOnboardingForm(userType:  "Doctor", user: user, dataModel: DataModel())
                 .tabItem {
                     Label("Appointments", systemImage: "person.badge.clock")
                 }
