@@ -65,7 +65,7 @@ struct Patient: Codable {
     var user: User
 }
 
-struct Specialty: Identifiable {
+struct Specialty: Identifiable, Codable {
     var id = UUID()
     var imageName: String
     var name: String
@@ -88,14 +88,24 @@ class DataModel: ObservableObject {
         Specialty(imageName: "Teeth", name: "Dentist", description: "Teeth and oral health", doctors: []),
         Specialty(imageName: "Phisio", name: "Physiotherapist", description: "Physical therapy", doctors: [])
     ]
-    @Published var doctorsForApprovalAndInTheDataBaseOfHospital:[Doctor] = []
-    
-
+    @Published var doctorsForApprovalAndInTheDataBaseOfHospital: [Doctor] = []
 
     init() {
         self.admins = [:]
         self.doctors = DataModel.loadFromFileDoctors() ?? [:]
         self.patients = DataModel.loadFromFilePatients() ?? [:]
+        self.specialties = [
+            Specialty(imageName: "heart", name: "Cardiologist", description: "Heart and Blood vessels", doctors: []),
+            Specialty(imageName: "rash", name: "Dermatology", description: "Skin, hair, and nails.", doctors: []),
+            Specialty(imageName: "heel", name: "Anesthesiology", description: "Pain relief", doctors: []),
+            Specialty(imageName: "stomach", name: "Gastroenterology", description: "Digestive system disorders", doctors: []),
+            Specialty(imageName: "brain", name: "Neurologist", description: "Brain and neurons", doctors: []),
+            Specialty(imageName: "uterus", name: "Gynecologist", description: "Female reproductive system", doctors: []),
+            Specialty(imageName: "Ortho", name: "Orthopedic", description: "Bones and joints", doctors: []),
+            Specialty(imageName: "Teeth", name: "Dentist", description: "Teeth and oral health", doctors: []),
+            Specialty(imageName: "Phisio", name: "Physiotherapist", description: "Physical therapy", doctors: [])
+        ]
+        self.doctorsForApprovalAndInTheDataBaseOfHospital = DataModel.loadFromFileDoctorsForApproval() ?? []
         initializeAdmins()
     }
 
@@ -179,6 +189,27 @@ class DataModel: ObservableObject {
         }
     }
 
+    static func loadFromFileDoctorsForApproval() -> [Doctor]? {
+        guard let codedDoctorsForApproval = try? Data(contentsOf: ArchiveURLForDoctorsForApproval) else {
+            print("Failed to load doctors for approval data from file.")
+            return nil
+        }
+        let propertyListDecoder = PropertyListDecoder()
+        let doctorsForApproval = try? propertyListDecoder.decode([Doctor].self, from: codedDoctorsForApproval)
+        print("Loaded doctors for approval: \(doctorsForApproval)")
+        return doctorsForApproval
+    }
+
+    func saveDoctorsForApprovalToFile(doctors: [Doctor]) {
+        let propertyListEncoder = PropertyListEncoder()
+        if let codedDoctorsForApproval = try? propertyListEncoder.encode(doctors) {
+            try? codedDoctorsForApproval.write(to: DataModel.ArchiveURLForDoctorsForApproval, options: .atomic)
+            print("Saved doctors for approval: \(doctors)")
+        } else {
+            print("Failed to save doctors for approval data.")
+        }
+    }
+
     func signIn(email: String, password: String) -> (String, User?) {
         if let admin = admins.values.first(where: { $0.user.email == email && $0.user.password == password }) {
             return ("Admin", admin.user)
@@ -196,8 +227,8 @@ extension DataModel {
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     static let ArchiveURLForDoctors = DocumentsDirectory.appendingPathComponent("doctors").appendingPathExtension("plist")
     static let ArchiveURLForPatients = DocumentsDirectory.appendingPathComponent("patients").appendingPathExtension("plist")
+    static let ArchiveURLForDoctorsForApproval = DocumentsDirectory.appendingPathComponent("doctorsForApproval").appendingPathExtension("plist")
 }
 
 // Instantiate DataModel
 var dataModel = DataModel()
-
