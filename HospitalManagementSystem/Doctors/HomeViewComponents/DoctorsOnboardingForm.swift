@@ -18,6 +18,8 @@ struct DoctorOnboardingForm: View {
     @State private var profilePicture: Data? = nil
     @State private var selectedProfilePicture: PhotosPickerItem? = nil
     @ObservedObject var dataModel: DataModel
+    @State private var submitButtonCount: Int = 0
+    @State private var isLoading = false
 
     @State private var showingDocumentPicker = false
     @State private var showingProfilePicturePicker = false
@@ -25,25 +27,51 @@ struct DoctorOnboardingForm: View {
     func validateAndSaveDoctorInformation() {
         emptyFields.removeAll()
 
+        if specialization == "Select Specialization" { emptyFields.append("Specialization") }
         if medicalRegNumber.isEmpty { emptyFields.append("Medical Registration Number") }
         if consultationFees.isEmpty { emptyFields.append("Consultation Fees") }
         if degree.isEmpty { emptyFields.append("Degree") }
         if previousPositions.isEmpty { emptyFields.append("Previous Positions") }
+        if biography.isEmpty { emptyFields.append("Biography") }
 
         if !emptyFields.isEmpty {
             showAlert = true
+        } else {
+            saveDoctorInformation()
         }
-//        else {
-//            saveDoctorInformation()
-//        }
     }
 
-//    private func saveDoctorInformation() {
-//        let newDoctor = Doctor(user: user, specialty: specialization, medicalRegNumber: medicalRegNumber, consultationFees: consultationFees, degree: degree, previousPositions: previousPositions, biography: biography, profilePicture: profilePicture, documents: selectedPhotosData)
-//        dataModel.saveDoctorInformation(newDoctor)
-//
-//        presentationMode.wrappedValue.dismiss()
-//    }
+    private func saveDoctorInformation() {
+        var doctor = self.dataModel.doctors[self.user] ?? Doctor(user: self.user, specialty: self.specialization, medicalRegNumber: "", consultationFees: "", degree: "", previousPositions: "", biography: "", profilePicture: nil, documents: [], submitButtonCount: 0)
+        doctor.specialty = self.specialization
+        doctor.medicalRegNumber = self.medicalRegNumber
+        doctor.consultationFees = self.consultationFees
+        doctor.degree = self.degree
+        doctor.previousPositions = self.previousPositions
+        doctor.biography = self.biography
+        doctor.profilePicture = self.profilePicture
+        doctor.documents = self.selectedPhotosData
+        doctor.submitButtonCount = self.submitButtonCount + 1
+        
+        self.dataModel.updateDoctor(for: self.user, with: doctor) // Updated line
+        
+        self.dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.append(doctor)
+        
+        self.isLoading = true
+        self.dataModel.saveDoctorsToFile()
+        self.dataModel.saveDoctorsForApprovalToFile()
+        self.isLoading = false
+        self.presentationMode.wrappedValue.dismiss()
+        
+        print("Total Updated Doctors -: \(dataModel.doctors)")
+        print("Total Updated Doctors For Approval -: \(dataModel.doctorsForApprovalAndInTheDataBaseOfHospital)")
+        print("Updated Details -: \(doctor)")
+
+        
+        
+    }
+
+
 
     var body: some View {
         NavigationView {
@@ -58,21 +86,14 @@ struct DoctorOnboardingForm: View {
                 }
                 .padding()
                 .navigationTitle("Fill Information")
-                .navigationBarItems(trailing: Button("Submit") {
-    //                validateAndSaveDoctorInformation()
-                    let newDoctor = Doctor(user: user, specialty: specialization, medicalRegNumber: medicalRegNumber, consultationFees: consultationFees, degree: degree, previousPositions: previousPositions, biography: biography, profilePicture: profilePicture, documents: selectedPhotosData)
-                    dataModel.saveDoctorInformation(newDoctor)
-
-                    print(dataModel.doctorsForApprovalAndInTheDataBaseOfHospital)
-                    presentationMode.wrappedValue.dismiss()
-                })
+                .navigationBarItems(trailing: submitButton)
                 .onTapGesture {
                     hideKeyboard()
                 }
                 .alert(isPresented: $showAlert) {
                     Alert(
                         title: Text("Incomplete Form"),
-                        message: Text("Please fill all required fields."),
+                        message: Text("Please fill all required fields: \(emptyFields.joined(separator: ", "))"),
                         dismissButton: .default(Text("OK"))
                     )
                 }
@@ -83,9 +104,23 @@ struct DoctorOnboardingForm: View {
             .sheet(isPresented: $showingProfilePicturePicker) {
                 ProfilePicturePickerView(selectedData: $profilePicture)
             }
-        }.onAppear {
-            print("User Type: \(userType)")
-            print("User: \(user)")
+        }
+        .onAppear {
+            if let doctor = dataModel.doctors[user] {
+                specialization = doctor.specialty
+                medicalRegNumber = doctor.medicalRegNumber
+                consultationFees = doctor.consultationFees
+                degree = doctor.degree
+                previousPositions = doctor.previousPositions
+                biography = doctor.biography
+                profilePicture = doctor.profilePicture
+                selectedPhotosData = doctor.documents
+                submitButtonCount = doctor.submitButtonCount
+                
+                print("Initial Details -: \(doctor)")
+                print("Total Doctors -: \(dataModel.doctors)")
+                print("Total Doctors For Approval -: \(dataModel.doctorsForApprovalAndInTheDataBaseOfHospital)")
+            }
         }
     }
 
@@ -176,11 +211,13 @@ struct DoctorOnboardingForm: View {
                         HStack(spacing: 10) {
                             ForEach(0..<selectedPhotosData.count, id: \.self) { index in
                                 VStack {
-                                    Image(uiImage: UIImage(data: selectedPhotosData[index])!)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 100)
-                                        .cornerRadius(10)
+                                    if let uiImage = UIImage(data: selectedPhotosData[index]) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 100, height: 100)
+                                            .cornerRadius(10)
+                                    }
 
                                     Button(action: {
                                         selectedPhotosData.remove(at: index)
@@ -195,6 +232,18 @@ struct DoctorOnboardingForm: View {
                         .padding(.vertical, 5)
                     }
                     .frame(height: 120) // Adjust height as needed
+                }
+            }
+        }
+    }
+
+    private var submitButton: some View {
+        HStack {
+            if isLoading {
+                ProgressView()
+            } else {
+                Button("Submit") {
+                    validateAndSaveDoctorInformation()
                 }
             }
         }
@@ -303,11 +352,8 @@ struct ProfilePicturePickerView: UIViewControllerRepresentable {
     }
 }
 
-
-
 extension View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-                                            
