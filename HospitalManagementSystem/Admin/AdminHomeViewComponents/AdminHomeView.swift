@@ -5,8 +5,8 @@ struct AdminHomeView: View {
     var user: User
 
     @EnvironmentObject var dataModel: DataModel
-    @State private var showingApproveConfirmation = false
-    @State private var showingRejectConfirmation = false
+    @State private var showingConfirmation = false
+    @State private var confirmationType: ConfirmationType = .approve
     @State private var selectedDoctor: Doctor?
     @State var searchText: String = ""
 
@@ -14,26 +14,26 @@ struct AdminHomeView: View {
         if dataModel.searchText.isEmpty {
             return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital
         } else {
-            return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.filter { $0.user.firstName.localizedCaseInsensitiveContains(dataModel.searchText) || $0.specialty.localizedCaseInsensitiveContains(dataModel.searchText) }
-        }
-    }
-
-    func approveDoctor(_ doctor: Doctor) {
-        if let index = dataModel.specialties.firstIndex(where: { $0.name == doctor.specialty }) {
-            dataModel.specialties[index].doctors.append(doctor)
-        } else {
-            if let existingSpecialty = dataModel.specialties.first(where: { $0.name == doctor.specialty }) {
-                let newSpecialty = Specialty(imageName: existingSpecialty.imageName, name: existingSpecialty.name, description: existingSpecialty.description, doctors: [doctor])
-                dataModel.specialties.append(newSpecialty)
+            return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.filter {
+                $0.user.firstName.localizedCaseInsensitiveContains(dataModel.searchText) ||
+                $0.specialty.localizedCaseInsensitiveContains(dataModel.searchText)
             }
         }
-        dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
-        dataModel.saveDoctorsToFile()
     }
 
-    func rejectDoctor(_ doctor: Doctor) {
-        dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
-        dataModel.saveDoctorsToFile()
+    enum ConfirmationType {
+        case approve
+        case reject
+    }
+
+    func handleDoctorAction(_ doctor: Doctor, action: ConfirmationType) {
+        switch action {
+        case .approve:
+            dataModel.approveDoctor(doctor)
+        case .reject:
+            dataModel.rejectDoctor(doctor)
+        }
+        dataModel.saveSpecialtyDoctors(for: doctor.specialty)
     }
 
     var body: some View {
@@ -46,6 +46,7 @@ struct AdminHomeView: View {
                                 .resizable()
                                 .frame(width: 50, height: 50)
                                 .clipShape(Circle())
+                                
                             VStack(alignment: .leading) {
                                 Text("\(doctor.user.firstName) \(doctor.user.lastName)")
                                     .font(.headline)
@@ -57,7 +58,8 @@ struct AdminHomeView: View {
                                 HStack {
                                     Button(action: {
                                         selectedDoctor = doctor
-                                        showingApproveConfirmation = true
+                                        confirmationType = .approve
+                                        showingConfirmation = true
                                     }) {
                                         Text("Approve")
                                             .padding(.vertical, 3)
@@ -68,22 +70,11 @@ struct AdminHomeView: View {
                                             .cornerRadius(20)
                                     }
                                     .buttonStyle(BorderlessButtonStyle())
-                                    .alert(isPresented: $showingApproveConfirmation) {
-                                        Alert(
-                                            title: Text("Approve Doctor"),
-                                            message: Text("Are you sure you want to approve this doctor?"),
-                                            primaryButton: .destructive(Text("Approve")) {
-                                                if let doctor = selectedDoctor {
-                                                    approveDoctor(doctor)
-                                                }
-                                            },
-                                            secondaryButton: .cancel()
-                                        )
-                                    }
 
                                     Button(action: {
                                         selectedDoctor = doctor
-                                        showingRejectConfirmation = true
+                                        confirmationType = .reject
+                                        showingConfirmation = true
                                     }) {
                                         Text("Reject")
                                             .padding(.vertical, 3)
@@ -94,18 +85,6 @@ struct AdminHomeView: View {
                                             .cornerRadius(20)
                                     }
                                     .buttonStyle(BorderlessButtonStyle())
-                                    .alert(isPresented: $showingRejectConfirmation) {
-                                        Alert(
-                                            title: Text("Reject Doctor"),
-                                            message: Text("Are you sure you want to reject this doctor?"),
-                                            primaryButton: .destructive(Text("Reject")) {
-                                                if let doctor = selectedDoctor {
-                                                    rejectDoctor(doctor)
-                                                }
-                                            },
-                                            secondaryButton: .cancel()
-                                        )
-                                    }
                                 }
                             }
                         }
@@ -114,6 +93,18 @@ struct AdminHomeView: View {
             }
             .navigationTitle("Admin Home")
             .searchable(text: $dataModel.searchText)
+            .alert(isPresented: $showingConfirmation) {
+                Alert(
+                    title: Text(confirmationType == .approve ? "Approve Doctor" : "Reject Doctor"),
+                    message: Text("Are you sure you want to \(confirmationType == .approve ? "approve" : "reject") this doctor?"),
+                    primaryButton: .destructive(Text(confirmationType == .approve ? "Approve" : "Reject")) {
+                        if let doctor = selectedDoctor {
+                            handleDoctorAction(doctor, action: confirmationType)
+                        }
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
         }
     }
 }

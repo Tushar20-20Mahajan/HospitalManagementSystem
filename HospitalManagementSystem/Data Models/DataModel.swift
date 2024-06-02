@@ -424,6 +424,59 @@ class DataModel: ObservableObject {
             print("Failed to save Physiotherapist doctors data.")
         }
     }
+    
+    // Remove a doctor from the list
+      func removeDoctorForApproval(at index: Int) -> Doctor? {
+          // Ensure the index is valid before removing the doctor
+          guard index >= 0 && index < doctorsForApprovalAndInTheDataBaseOfHospital.count else {
+              return nil
+          }
+          let removedDoctor = doctorsForApprovalAndInTheDataBaseOfHospital.remove(at: index)
+          saveDoctorsForApprovalToFile()
+          return removedDoctor
+      }
+    
+    
+    
+    func approveDoctor(_ doctor: Doctor) {
+        if let index = specialties.firstIndex(where: { $0.name == doctor.specialty }) {
+            specialties[index].doctors.append(doctor)
+        } else {
+            let newSpecialty = Specialty(imageName: "defaultImage", name: doctor.specialty, description: "", doctors: [doctor])
+            specialties.append(newSpecialty)
+        }
+        removeDoctorForApproval(at: { $0.id == doctor.id })
+    }
+
+    func rejectDoctor(_ doctor: Doctor) {
+        doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
+        saveDoctorsForApprovalToFile()
+    }
+
+    func saveSpecialtyDoctors(for specialty: String) {
+        switch specialty {
+        case "Cardiologist":
+            saveDoctorsToCardiologist()
+        case "Dermatology":
+            saveDoctorsToDermotology()
+        case "Anesthesiology":
+            saveDoctorsToAnesthesiology()
+        case "Gastroenterology":
+            saveDoctorsToGastroenterology()
+        case "Neurologist":
+            saveDoctorsToNeurologist()
+        case "Gynecologist":
+            saveDoctorsToGynecologist()
+        case "Orthopedic":
+            saveDoctorsToOrthopedic()
+        case "Dentist":
+            saveDoctorsToDentist()
+        case "Physiotherapist":
+            saveDoctorsToPhysiotherapist()
+        default:
+            break
+        }
+    }
 
 
 
