@@ -4,11 +4,11 @@ struct AdminCategoriesList: View {
     var userType: String
     var user: User
 
-    @EnvironmentObject var viewModel: DataModel
+    @EnvironmentObject var dataModel: DataModel
 
     var body: some View {
         NavigationView {
-            List(viewModel.specialties) { specialty in
+            List(filteredSpecialties) { specialty in
                 NavigationLink(destination: DoctorsListView(specialty: specialty)) {
                     HStack {
                         Image(specialty.imageName)
@@ -27,7 +27,15 @@ struct AdminCategoriesList: View {
                 }
             }
             .navigationTitle("Categories")
-            .searchable(text: $viewModel.searchText)
+            .searchable(text: $dataModel.searchText)
+        }
+    }
+
+    var filteredSpecialties: [Specialty] {
+        if dataModel.searchText.isEmpty {
+            return dataModel.specialties
+        } else {
+            return dataModel.specialties.filter { $0.name.localizedCaseInsensitiveContains(dataModel.searchText) || $0.description.localizedCaseInsensitiveContains(dataModel.searchText) }
         }
     }
 }
@@ -44,7 +52,7 @@ struct DoctorsListView: View {
                     .clipShape(Circle())
                     .padding(.trailing, 10)
                 VStack(alignment: .leading) {
-                    Text(doctor.user.firstName + " " + doctor.user.lastName)
+                    Text("\(doctor.user.firstName) \(doctor.user.lastName)")
                         .font(.headline)
                     Text(doctor.specialty)
                         .font(.subheadline)

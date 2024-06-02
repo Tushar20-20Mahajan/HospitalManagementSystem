@@ -135,20 +135,8 @@ class DataModel: ObservableObject {
         }
     }
 
-    func approveDoctor(_ doctor: Doctor) {
-        if let index = specialties.firstIndex(where: { $0.name == doctor.specialty }) {
-            specialties[index].doctors.append(doctor)
-        } else {
-            let newSpecialty = Specialty(imageName: "", name: doctor.specialty, description: "", doctors: [doctor])
-            specialties.append(newSpecialty)
-        }
-        doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
-        saveSpecialtiesToFile()
-    }
 
-    func rejectDoctor(_ doctor: User) {
-        doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.user.id == doctor.id }
-    }
+
 
     func signIn(email: String, password: String) -> (String, User?) {
         if let admin = admins.values.first(where: { $0.user.email == email && $0.user.password == password }) {

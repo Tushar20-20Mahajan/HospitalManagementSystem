@@ -4,156 +4,116 @@ struct AdminHomeView: View {
     var userType: String
     var user: User
 
-    @EnvironmentObject var viewModel: DataModel
+    @EnvironmentObject var dataModel: DataModel
     @State private var showingApproveConfirmation = false
     @State private var showingRejectConfirmation = false
     @State private var selectedDoctor: Doctor?
+    @State var searchText: String = ""
 
-    // Search Functionality
-    @State private var searchText: String = ""
-    
     var filteredDoctors: [Doctor] {
-        if searchText.isEmpty {
-            return viewModel.doctorsForApprovalAndInTheDataBaseOfHospital
+        if dataModel.searchText.isEmpty {
+            return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital
         } else {
-            return viewModel.doctorsForApprovalAndInTheDataBaseOfHospital.filter {
-                $0.user.firstName.localizedCaseInsensitiveContains(searchText) ||
-                $0.specialty.localizedCaseInsensitiveContains(searchText)
+            return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.filter { $0.user.firstName.localizedCaseInsensitiveContains(dataModel.searchText) || $0.specialty.localizedCaseInsensitiveContains(dataModel.searchText) }
+        }
+    }
+
+    func approveDoctor(_ doctor: Doctor) {
+        if let index = dataModel.specialties.firstIndex(where: { $0.name == doctor.specialty }) {
+            dataModel.specialties[index].doctors.append(doctor)
+        } else {
+            if let existingSpecialty = dataModel.specialties.first(where: { $0.name == doctor.specialty }) {
+                let newSpecialty = Specialty(imageName: existingSpecialty.imageName, name: existingSpecialty.name, description: existingSpecialty.description, doctors: [doctor])
+                dataModel.specialties.append(newSpecialty)
             }
         }
+        dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
+        dataModel.saveDoctorsToFile()
+    }
+
+    func rejectDoctor(_ doctor: Doctor) {
+        dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }
+        dataModel.saveDoctorsToFile()
     }
 
     var body: some View {
         NavigationView {
             List {
                 Section(header: Text("Doctors")) {
-                    ForEach(viewModel.doctorsForApprovalAndInTheDataBaseOfHospital) { doctor in
-                        DoctorRowView(doctor: doctor,
-                                      onApprove: { selectDoctorForApproval(doctor) },
-                                      onReject: { selectDoctorForRejection(doctor) })
+                    ForEach(filteredDoctors) { doctor in
+                        HStack {
+                            Image(uiImage: UIImage(data: doctor.profilePicture ?? Data()) ?? UIImage())
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .clipShape(Circle())
+                            VStack(alignment: .leading) {
+                                Text("\(doctor.user.firstName) \(doctor.user.lastName)")
+                                    .font(.headline)
+                                    .frame(minWidth: 150)
+                                    .padding(.bottom, 10)
+                                Text(doctor.specialty)
+                                    .font(.subheadline)
+                                    .padding(.bottom, 10)
+                                HStack {
+                                    Button(action: {
+                                        selectedDoctor = doctor
+                                        showingApproveConfirmation = true
+                                    }) {
+                                        Text("Approve")
+                                            .padding(.vertical, 3)
+                                            .padding(.horizontal, 10)
+                                            .frame(minWidth: 110)
+                                            .background(Color.green)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(20)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
+                                    .alert(isPresented: $showingApproveConfirmation) {
+                                        Alert(
+                                            title: Text("Approve Doctor"),
+                                            message: Text("Are you sure you want to approve this doctor?"),
+                                            primaryButton: .destructive(Text("Approve")) {
+                                                if let doctor = selectedDoctor {
+                                                    approveDoctor(doctor)
+                                                }
+                                            },
+                                            secondaryButton: .cancel()
+                                        )
+                                    }
+
+                                    Button(action: {
+                                        selectedDoctor = doctor
+                                        showingRejectConfirmation = true
+                                    }) {
+                                        Text("Reject")
+                                            .padding(.vertical, 3)
+                                            .padding(.horizontal, 10)
+                                            .frame(minWidth: 110)
+                                            .background(Color.red)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(20)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
+                                    .alert(isPresented: $showingRejectConfirmation) {
+                                        Alert(
+                                            title: Text("Reject Doctor"),
+                                            message: Text("Are you sure you want to reject this doctor?"),
+                                            primaryButton: .destructive(Text("Reject")) {
+                                                if let doctor = selectedDoctor {
+                                                    rejectDoctor(doctor)
+                                                }
+                                            },
+                                            secondaryButton: .cancel()
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-
-            .navigationTitle("Doctors")
-            .searchable(text: $searchText)
-            .alert(isPresented: $showingApproveConfirmation) {
-                Alert(
-                    title: Text("Approve Doctor"),
-                    message: Text("Are you sure you want to approve this doctor?"),
-                    primaryButton: .destructive(Text("Approve")) {
-                        if let doctor = selectedDoctor {
-                            viewModel.approveDoctor(doctor)
-                        }
-                    },
-                    secondaryButton: .cancel()
-                )
-            }
-            .alert(isPresented: $showingRejectConfirmation) {
-                Alert(
-                    title: Text("Reject Doctor"),
-                    message: Text("Are you sure you want to reject this doctor?"),
-                    primaryButton: .destructive(Text("Reject")) {
-                        if let doctor = selectedDoctor {
-                            viewModel.rejectDoctor(doctor.user)
-                        }
-                    },
-                    secondaryButton: .cancel()
-                )
-            }
-            .onAppear {
-                print("User Type: \(userType)")
-                print("User: \(user)")
-            }
-        }
-    }
-    
-    private func selectDoctorForApproval(_ doctor: Doctor) {
-        selectedDoctor = doctor
-        showingApproveConfirmation = true
-    }
-
-    private func selectDoctorForRejection(_ doctor: Doctor) {
-        selectedDoctor = doctor
-        showingRejectConfirmation = true
-    }
-}
-
-struct DoctorRowView: View {
-    var doctor: Doctor
-    var onApprove: () -> Void
-    var onReject: () -> Void
-
-    var body: some View {
-        HStack {
-            ProfilePictureView(imageData: doctor.profilePicture)
-                .frame(width: 50, height: 50)
-                .clipShape(Circle()).padding(.trailing , 10)
-
-            VStack(alignment: .leading) {
-                Text("\(doctor.user.firstName) \(doctor.user.lastName)")
-                    .font(.headline)
-                    .padding(.bottom, 10)
-                Text(doctor.specialty)
-                    .font(.subheadline)
-                    .padding(.bottom, 10)
-                ActionButtons(onApprove: onApprove, onReject: onReject)
-            }
-            Spacer()
-            Image(systemName: "info.circle")
-                .resizable()
-                .frame(width: 20, height: 20)
-                .foregroundColor(.blue)
-        }
-    }
-}
-
-struct ProfilePictureView: View {
-    var imageData: Data?
-
-    var body: some View {
-        Group {
-            if let imageData = imageData, let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-            }
-        }
-    }
-}
-
-struct ActionButtons: View {
-    var onApprove: () -> Void
-    var onReject: () -> Void
-
-    var body: some View {
-        HStack {
-            Button(action: onApprove) {
-                Text("Approve")
-                    .padding(.vertical, 3)
-                    .padding(.horizontal, 10)
-                    .frame(minWidth: 110)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(20)
-            }
-            .buttonStyle(BorderlessButtonStyle())
-
-            Button(action: onReject) {
-                Text("Reject")
-                    .padding(.vertical, 3)
-                    .padding(.horizontal, 10)
-                    .frame(minWidth: 110)
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(20)
-            }
-            .padding(.leading, 20)
-            .buttonStyle(BorderlessButtonStyle())
+            .navigationTitle("Admin Home")
+            .searchable(text: $dataModel.searchText)
         }
     }
 }
