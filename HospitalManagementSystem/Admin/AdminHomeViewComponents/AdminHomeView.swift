@@ -8,15 +8,15 @@ struct AdminHomeView: View {
     @State private var showingConfirmation = false
     @State private var confirmationType: ConfirmationType = .approve
     @State private var selectedDoctor: Doctor?
-    @State var searchText: String = ""
+    @State private var searchText: String = ""
 
     var filteredDoctors: [Doctor] {
-        if dataModel.searchText.isEmpty {
+        if searchText.isEmpty {
             return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital
         } else {
             return dataModel.doctorsForApprovalAndInTheDataBaseOfHospital.filter {
-                $0.user.firstName.localizedCaseInsensitiveContains(dataModel.searchText) ||
-                $0.specialty.localizedCaseInsensitiveContains(dataModel.searchText)
+                $0.user.firstName.localizedCaseInsensitiveContains(searchText) ||
+                $0.specialty.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
@@ -40,59 +40,26 @@ struct AdminHomeView: View {
         NavigationView {
             List {
                 Section(header: Text("Doctors")) {
-                    ForEach(filteredDoctors) { doctor in
-                        HStack {
-                            Image(uiImage: UIImage(data: doctor.profilePicture ?? Data()) ?? UIImage())
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
-                                
-                            VStack(alignment: .leading) {
-                                Text("\(doctor.user.firstName) \(doctor.user.lastName)")
-                                    .font(.headline)
-                                    .frame(minWidth: 150)
-                                    .padding(.bottom, 10)
-                                Text(doctor.specialty)
-                                    .font(.subheadline)
-                                    .padding(.bottom, 10)
-                                HStack {
-                                    Button(action: {
-                                        selectedDoctor = doctor
-                                        confirmationType = .approve
-                                        showingConfirmation = true
-                                    }) {
-                                        Text("Approve")
-                                            .padding(.vertical, 3)
-                                            .padding(.horizontal, 10)
-                                            .frame(minWidth: 110)
-                                            .background(Color.green)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(20)
-                                    }
-                                    .buttonStyle(BorderlessButtonStyle())
-
-                                    Button(action: {
-                                        selectedDoctor = doctor
-                                        confirmationType = .reject
-                                        showingConfirmation = true
-                                    }) {
-                                        Text("Reject")
-                                            .padding(.vertical, 3)
-                                            .padding(.horizontal, 10)
-                                            .frame(minWidth: 110)
-                                            .background(Color.red)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(20)
-                                    }
-                                    .buttonStyle(BorderlessButtonStyle())
-                                }
-                            }
+                    if filteredDoctors.isEmpty {
+                        Text("No doctors found.")
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(filteredDoctors) { doctor in
+                            DoctorListItemView(doctor: doctor, onApprove: {
+                                selectedDoctor = doctor
+                                confirmationType = .approve
+                                showingConfirmation = true
+                            }, onReject: {
+                                selectedDoctor = doctor
+                                confirmationType = .reject
+                                showingConfirmation = true
+                            })
                         }
                     }
                 }
             }
             .navigationTitle("Admin Home")
-            .searchable(text: $dataModel.searchText)
+            .searchable(text: $searchText)
             .alert(isPresented: $showingConfirmation) {
                 Alert(
                     title: Text(confirmationType == .approve ? "Approve Doctor" : "Reject Doctor"),
@@ -104,6 +71,62 @@ struct AdminHomeView: View {
                     },
                     secondaryButton: .cancel()
                 )
+            }
+        }
+    }
+}
+
+struct DoctorListItemView: View {
+    var doctor: Doctor
+    var onApprove: () -> Void
+    var onReject: () -> Void
+
+    var body: some View {
+        HStack {
+            if let profilePictureData = doctor.profilePicture,
+               let uiImage = UIImage(data: profilePictureData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+            } else {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+            }
+
+            VStack(alignment: .leading) {
+                Text("\(doctor.user.firstName) \(doctor.user.lastName)")
+                    .font(.headline)
+                    .frame(minWidth: 150)
+                    .padding(.bottom, 10)
+                Text(doctor.specialty)
+                    .font(.subheadline)
+                    .padding(.bottom, 10)
+                HStack {
+                    Button(action: onApprove) {
+                        Text("Approve")
+                            .padding(.vertical, 3)
+                            .padding(.horizontal, 10)
+                            .frame(minWidth: 110)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+
+                    Button(action: onReject) {
+                        Text("Reject")
+                            .padding(.vertical, 3)
+                            .padding(.horizontal, 10)
+                            .frame(minWidth: 110)
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
             }
         }
     }
