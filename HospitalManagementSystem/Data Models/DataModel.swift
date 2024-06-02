@@ -223,6 +223,7 @@ class DataModel: ObservableObject {
             print("Failed to save doctors for approval data.")
         }
     }
+    
 
     func saveSpecialtiesToFile() {
         // Implement this function if you want to save the specialties to a file
@@ -445,8 +446,11 @@ class DataModel: ObservableObject {
             let newSpecialty = Specialty(imageName: "defaultImage", name: doctor.specialty, description: "", doctors: [doctor])
             specialties.append(newSpecialty)
         }
-        removeDoctorForApproval(at: { $0.id == doctor.id })
+        if let index = doctorsForApprovalAndInTheDataBaseOfHospital.firstIndex(where: { $0.id == doctor.id }) {
+            removeDoctorForApproval(at: index)
+        }
     }
+
 
     func rejectDoctor(_ doctor: Doctor) {
         doctorsForApprovalAndInTheDataBaseOfHospital.removeAll { $0.id == doctor.id }

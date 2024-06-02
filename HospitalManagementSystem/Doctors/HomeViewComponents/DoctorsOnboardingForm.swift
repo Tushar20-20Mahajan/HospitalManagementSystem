@@ -51,7 +51,7 @@ struct DoctorOnboardingForm: View {
         doctor.biography = self.biography
         doctor.profilePicture = self.profilePicture
         doctor.documents = self.selectedPhotosData
-        doctor.submitButtonCount = self.submitButtonCount + 1
+        doctor.submitButtonCount = 1
         
         self.dataModel.updateDoctor(for: self.user, with: doctor) // Updated line
         
