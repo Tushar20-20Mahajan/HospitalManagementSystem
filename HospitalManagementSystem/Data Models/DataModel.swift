@@ -77,6 +77,8 @@
         @Published private(set) var patients: [User: Patient] = [:]
         @Published var specialties: [Specialty] = []
         @Published var doctorsForApprovalAndInTheDataBaseOfHospital: [Doctor] = []
+        @Published var searchText: String = "" 
+        
         
         // Method to update doctors dictionary
            func updateDoctor(for user: User, with doctor: Doctor) {

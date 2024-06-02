@@ -88,7 +88,7 @@ struct DoctorRowView: View {
         HStack {
             ProfilePictureView(imageData: doctor.profilePicture)
                 .frame(width: 50, height: 50)
-                .clipShape(Circle())
+                .clipShape(Circle()).padding(.trailing , 10)
 
             VStack(alignment: .leading) {
                 Text("\(doctor.user.firstName) \(doctor.user.lastName)")

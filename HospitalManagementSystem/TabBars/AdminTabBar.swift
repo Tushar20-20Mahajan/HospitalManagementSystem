@@ -9,7 +9,7 @@ struct AdminTabBar: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            Text("Doctors")
+            AdminCategoriesList(userType: "Admin", user: user)
                 .tabItem {
                     Label("Doctors", systemImage: "person.badge.clock")
                 }
