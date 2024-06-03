@@ -16,6 +16,7 @@
 		C0BFDF0C2C07884100FB277F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BFDF0B2C07884100FB277F /* Assets.xcassets */; };
 		C0BFDF0F2C07884100FB277F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BFDF0E2C07884100FB277F /* Preview Assets.xcassets */; };
 		C0E2BA402C0C61D6003115A7 /* AdminCategoryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E2BA3F2C0C61D6003115A7 /* AdminCategoryList.swift */; };
+		C0E2BA422C0DAF15003115A7 /* HealthDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E2BA412C0DAF15003115A7 /* HealthDetailsView.swift */; };
 		C0F145822C09A4F300FCD555 /* AdminTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145812C09A4F200FCD555 /* AdminTabBar.swift */; };
 		C0F145862C09A78600FCD555 /* AdminHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145852C09A78600FCD555 /* AdminHomeView.swift */; };
 		C0F145882C09AB4500FCD555 /* DoctorTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F145872C09AB4500FCD555 /* DoctorTabBar.swift */; };
@@ -44,6 +45,7 @@
 		C0BFDF0B2C07884100FB277F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0BFDF0E2C07884100FB277F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C0E2BA3F2C0C61D6003115A7 /* AdminCategoryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminCategoryList.swift; sourceTree = "<group>"; };
+		C0E2BA412C0DAF15003115A7 /* HealthDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDetailsView.swift; sourceTree = "<group>"; };
 		C0F145812C09A4F200FCD555 /* AdminTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminTabBar.swift; sourceTree = "<group>"; };
 		C0F145852C09A78600FCD555 /* AdminHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminHomeView.swift; sourceTree = "<group>"; };
 		C0F145872C09AB4500FCD555 /* DoctorTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorTabBar.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 			children = (
 				C0F145912C09C6FA00FCD555 /* Appointments.swift */,
 				C0F145932C09C71B00FCD555 /* DoctorProfile.swift */,
+				C0E2BA412C0DAF15003115A7 /* HealthDetailsView.swift */,
 			);
 			path = DoctorProfileComponents;
 			sourceTree = "<group>";
@@ -326,6 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0F145A02C09C8CD00FCD555 /* AdminProfile.swift in Sources */,
+				C0E2BA422C0DAF15003115A7 /* HealthDetailsView.swift in Sources */,
 				C0F1458E2C09BE7F00FCD555 /* PatientHomeView.swift in Sources */,
 				C0F145902C09C6EE00FCD555 /* PatientDetailList.swift in Sources */,
 				C0F1458C2C09BE7100FCD555 /* DoctorHomeView.swift in Sources */,

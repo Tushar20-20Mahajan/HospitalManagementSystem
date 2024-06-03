@@ -161,7 +161,7 @@ class DataModel: ObservableObject {
             Specialty(imageName: "stomach", name: "Gastroenterology", description: "Digestive system disorders", doctors: DataModel.loadFromFileGastroenterology() ?? []),
             Specialty(imageName: "brain", name: "Neurologist", description: "Brain and neurons", doctors: DataModel.loadFromFileNeurologist() ?? []),
             Specialty(imageName: "uterus", name: "Gynecologist", description: "Female reproductive system", doctors: DataModel.loadFromFileGynecologist() ?? []),
-            Specialty(imageName: "Ortho", name: "Orthopedic", description: "Bones and joints", doctors: DataModel.loadFromFileOrthopedic() ?? []),
+            Specialty(imageName: "ortho", name: "Orthopedic", description: "Bones and joints", doctors: DataModel.loadFromFileOrthopedic() ?? []),
             Specialty(imageName: "Teeth", name: "Dentist", description: "Teeth and oral health", doctors: DataModel.loadFromFileDentist() ?? []),
             Specialty(imageName: "Phisio", name: "Physiotherapist", description: "Physical therapy", doctors: DataModel.loadFromFilePhysiotherapist() ?? [])
         ]

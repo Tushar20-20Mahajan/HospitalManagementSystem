@@ -17,7 +17,7 @@ struct DoctorTabBar: View {
                 .tabItem {
                     Label("PatientsList", systemImage: "person.2.fill")
                 }
-            Text("Profile")
+            DoctorProfile(userType: "Doctor", user: user)
                 .tabItem {
                     Label("Profile", systemImage: "person")
                 }
